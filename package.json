@@ -1,0 +1,24 @@
+{
+    "description": "Plugin for the ART DTrack tracking system.",
+    "displayName": "DTrack Plugin",
+    "keywords": [
+        "art", "dtrack",
+        "tracking",
+        "unity"
+    ],
+    "name": "com.art.dtrack",
+    "readme": "README.md",
+    "repoPackagePath": "",
+    "repository": {
+        "revision": "", 
+        "type": "git", 
+        "url": "https://github.com/ar-tracking/UnityDTrackPlugin"
+    },
+    "unity": "2019.1",
+    "version": "0.1.4-beta.3",
+    "author": {
+        "name": "Advanced Realtime Tracking GmbH",
+        "url": "https://ar-tracking.de"
+    }
+}
+
