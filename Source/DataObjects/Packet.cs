@@ -34,15 +34,18 @@ namespace DTrack.DataObjects
         public long Frame { get; set; }
 
         //private double Timestamp { get; set; }
-        //6dcal
+
+        /* 6d */
         public Dictionary<int, Body6Dof> Body6D { get; set; }
 
-        //3Dof
-        //6df
-        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        /* 6df2 */
         public Dictionary<int, BodyFlystick> Flystick { get; set; }
-        //6dmt
-        //6dmtr
-        //gl/glcal
+        /* 6dmt2 */
+        // TODO
+        /* 6dmtr */
+        // TODO
+
+        /* gl/glcal */
+        // TODO
     }
 }
