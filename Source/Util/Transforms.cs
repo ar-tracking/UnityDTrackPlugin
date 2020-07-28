@@ -37,7 +37,7 @@ namespace DTrack.Util
         public float y;
         public float Y => y;
         public float z;
-        public float Z => y;
+        public float Z => z;
 
         public Position3( float p0, float p1, float p2 )
         {

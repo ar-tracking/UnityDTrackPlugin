@@ -61,7 +61,7 @@ namespace DTrack.Parser
                 var inputSplit = sectionSplit[3].Split(Statics.NumberSplit);
 
                 var bodyId = Convert.ToInt32(metaSplit[0]);
-                var confidence = Convert.ToSingle(metaSplit[1]);
+                var confidence = Convert.ToSingle(metaSplit[1], CultureInfo.InvariantCulture);
                 var buttonCount = Convert.ToInt32(metaSplit[2]);
                 var controllerCount = Convert.ToInt32(metaSplit[3]);
 
@@ -99,7 +99,7 @@ namespace DTrack.Parser
                     controllers = new float[controllerCount];
                     for (int i = buttonValueCount; i < (controllerCount + buttonValueCount); i++)
                     {
-                        controllers[i - buttonValueCount] = Convert.ToSingle(inputSplit[i]);
+                        controllers[i - buttonValueCount] = Convert.ToSingle(inputSplit[i], CultureInfo.InvariantCulture);
                     }
                 }
 

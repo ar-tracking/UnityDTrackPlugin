@@ -59,7 +59,7 @@ namespace DTrack.Parser
                 var matrixSplit = sectionSplit[2].Split(Statics.NumberSplit);
 
                 var bodyId = Convert.ToInt32(metaSplit[0]);
-                var confidence = Convert.ToSingle(metaSplit[1]);
+                var confidence = Convert.ToSingle(metaSplit[1], CultureInfo.InvariantCulture);
 
                 var px = Convert.ToSingle(threeSplit[0], CultureInfo.InvariantCulture);
                 var py = Convert.ToSingle(threeSplit[1], CultureInfo.InvariantCulture);
