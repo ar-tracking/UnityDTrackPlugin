@@ -1,5 +1,9 @@
-﻿/* Copyright (c) 2019, Advanced Realtime Tracking GmbH
- * 
+﻿/* Unity DTrack Plugin: script FrameParser
+ *
+ * Parsing DTrack frame number of one frame
+ *
+ * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -28,13 +32,18 @@ using System;
 
 namespace DTrack.Parser
 {
+
+
     public static class FrameParser
     {
-        public static long ParseFrame(string raw)
+        public static long Parse( string raw )
         {
             var split = raw.Split(' ');
             var value = Convert.ToInt64(split[1]);
             return value;
         }
     }
-}
+
+
+}  // namespace DTrack.Parser
+

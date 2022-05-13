@@ -15,10 +15,10 @@
         "url": "https://github.com/ar-tracking/UnityDTrackPlugin"
     },
     "unity": "2019.1",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "author": {
-        "name": "Advanced Realtime Tracking GmbH",
-        "url": "https://ar-tracking.de"
+        "name": "Advanced Realtime Tracking GmbH & Co. KG",
+        "url": "https://ar-tracking.com"
     }
 }
 

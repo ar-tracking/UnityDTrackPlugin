@@ -1,5 +1,9 @@
-/* Copyright (c) 2019, Advanced Realtime Tracking GmbH
- * 
+/* Unity DTrack Plugin: script BodyFlystickParser
+ *
+ * Parsing DTrack Flystick output data of one frame
+ *
+ * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -33,9 +37,11 @@ using UnityEngine;
 
 namespace DTrack.Parser
 {
+
+
     public static class BodyFlystickParser
     {
-        public static Dictionary<int, BodyFlystick> ParserFlystick(string raw)
+        public static Dictionary< int, BodyFlystick > Parse( string raw )
         {
             var bodyCountSplit = raw.Split(Statics.NumberSplit);
             var bodyCount = Convert.ToInt32(bodyCountSplit[1]);
@@ -55,42 +61,45 @@ namespace DTrack.Parser
                 var trimmedBody = body.Trim(Statics.TrimChars);
                 var sectionSplit = trimmedBody.Split(Statics.SectionSplit, StringSplitOptions.None);
 
-                var metaSplit = sectionSplit[0].Split(Statics.NumberSplit);
-                var threeSplit = sectionSplit[1].Split(Statics.NumberSplit);
-                var matrixSplit = sectionSplit[2].Split(Statics.NumberSplit);
-                var inputSplit = sectionSplit[3].Split(Statics.NumberSplit);
+                string[] metaSection = sectionSplit[ 0 ].Split( Statics.NumberSplit );
+                int bodyId = Convert.ToInt32( metaSection[ 0 ] );
+                float confidence = Convert.ToSingle( metaSection[ 1 ], CultureInfo.InvariantCulture );
+                int buttonCount = Convert.ToInt32( metaSection[ 2 ] );
+                int controllerCount = Convert.ToInt32( metaSection[ 3 ] );
 
-                var bodyId = Convert.ToInt32(metaSplit[0]);
-                var confidence = Convert.ToSingle(metaSplit[1], CultureInfo.InvariantCulture);
-                var buttonCount = Convert.ToInt32(metaSplit[2]);
-                var controllerCount = Convert.ToInt32(metaSplit[3]);
+                string[] positionSection = sectionSplit[ 1 ].Split( Statics.NumberSplit );
+                float posX = Convert.ToSingle( positionSection[ 0 ], CultureInfo.InvariantCulture );
+                float posY = Convert.ToSingle( positionSection[ 1 ], CultureInfo.InvariantCulture );
+                float posZ = Convert.ToSingle( positionSection[ 2 ], CultureInfo.InvariantCulture );
 
-                var posX = Convert.ToSingle(threeSplit[0], CultureInfo.InvariantCulture);
-                var posY = Convert.ToSingle(threeSplit[1], CultureInfo.InvariantCulture);
-                var posZ = Convert.ToSingle(threeSplit[2], CultureInfo.InvariantCulture);
+                string[] rotationSection = sectionSplit[ 2 ].Split( Statics.NumberSplit );
+                float m0 = Convert.ToSingle( rotationSection[ 0 ], CultureInfo.InvariantCulture );
+                float m1 = Convert.ToSingle( rotationSection[ 1 ], CultureInfo.InvariantCulture );
+                float m2 = Convert.ToSingle( rotationSection[ 2 ], CultureInfo.InvariantCulture );
+                float m3 = Convert.ToSingle( rotationSection[ 3 ], CultureInfo.InvariantCulture );
+                float m4 = Convert.ToSingle( rotationSection[ 4 ], CultureInfo.InvariantCulture );
+                float m5 = Convert.ToSingle( rotationSection[ 5 ], CultureInfo.InvariantCulture );
+                float m6 = Convert.ToSingle( rotationSection[ 6 ], CultureInfo.InvariantCulture );
+                float m7 = Convert.ToSingle( rotationSection[ 7 ], CultureInfo.InvariantCulture );
+                float m8 = Convert.ToSingle( rotationSection[ 8 ], CultureInfo.InvariantCulture );
 
-                var m0 = Convert.ToSingle(matrixSplit[0], CultureInfo.InvariantCulture);
-                var m1 = Convert.ToSingle(matrixSplit[1], CultureInfo.InvariantCulture);
-                var m2 = Convert.ToSingle(matrixSplit[2], CultureInfo.InvariantCulture);
-                var m3 = Convert.ToSingle(matrixSplit[3], CultureInfo.InvariantCulture);
-                var m4 = Convert.ToSingle(matrixSplit[4], CultureInfo.InvariantCulture);
-                var m5 = Convert.ToSingle(matrixSplit[5], CultureInfo.InvariantCulture);
-                var m6 = Convert.ToSingle(matrixSplit[6], CultureInfo.InvariantCulture);
-                var m7 = Convert.ToSingle(matrixSplit[7], CultureInfo.InvariantCulture);
-                var m8 = Convert.ToSingle(matrixSplit[8], CultureInfo.InvariantCulture);
+                string[] inputSection = null;
+                if ( ( buttonCount > 0 ) || ( controllerCount > 0 ) )
+                {
+                    inputSection = sectionSplit[ 3 ].Split( Statics.NumberSplit );
+                }
 
                 int[] buttons = null;
                 float[] controllers = null;
 
-                var buttonValueCount = 0;
-
+                int buttonValueCount = 0;
                 if (buttonCount > 0)
                 {
                     buttonValueCount = (int) Math.Ceiling((float) buttonCount / (float) 32);
                     buttons = new int[buttonCount];
                     for (var i = 0; i < buttonValueCount; i++)
                     {
-                        buttons[i] = Convert.ToInt32(inputSplit[i]);
+                        buttons[ i ] = Convert.ToInt32( inputSection[ i ] );
                     }
                 }
 
@@ -99,7 +108,7 @@ namespace DTrack.Parser
                     controllers = new float[controllerCount];
                     for (int i = buttonValueCount; i < (controllerCount + buttonValueCount); i++)
                     {
-                        controllers[i - buttonValueCount] = Convert.ToSingle(inputSplit[i], CultureInfo.InvariantCulture);
+                        controllers[ i - buttonValueCount ] = Convert.ToSingle( inputSection[ i ], CultureInfo.InvariantCulture );
                     }
                 }
 
@@ -111,4 +120,7 @@ namespace DTrack.Parser
             return bodies;
         }
     }
-}
+
+
+}  // namespace DTrack.Parser
+

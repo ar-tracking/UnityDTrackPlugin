@@ -1,4 +1,8 @@
-/* Copyright (c) 2019, Advanced Realtime Tracking GmbH
+/* Unity DTrack Plugin: script BodyFlystick
+ *
+ * Data object containing DTrack Flystick data
+ *
+ * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -25,6 +29,8 @@
  */
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using DTrack.DataObjects.Exceptions;
 using DTrack.DataObjects.Interfaces;
 using DTrack.Util;
@@ -32,6 +38,8 @@ using UnityEngine;
 
 namespace DTrack.DataObjects.Body
 {
+
+
     public class BodyFlystick : Body, IVectorRotationProvider,IQuaternionRotationProvider
     {
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
@@ -111,6 +119,11 @@ namespace DTrack.DataObjects.Body
             throw new ButtonNotFoundException(buttonId, Id);
         }
 
+        public int GetControllerCount()
+        {
+            return this.ControllerCount;
+        }
+
         public float GetControllerPosition(int controllerId)
         {
             if (this.ControllerCount > controllerId)
@@ -121,5 +134,7 @@ namespace DTrack.DataObjects.Body
             throw new ControllerNotFoundException(controllerId, Id);
         }
     }
-}
+
+
+}  // namespace DTrack.DataObjects.Body
 

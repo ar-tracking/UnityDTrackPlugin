@@ -1,5 +1,9 @@
-/* Copyright (c) 2019, Advanced Realtime Tracking GmbH
- * 
+/* Unity DTrack Plugin: script Transform
+ *
+ * Script providing helper routines to convert from ART to Unity world
+ *
+ * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -28,6 +32,8 @@ using UnityEngine;
 
 namespace DTrack.Util
 {
+
+
     public class Position3
     {
         // Position p (unit m):
@@ -48,10 +54,11 @@ namespace DTrack.Util
 
         public Vector3 ToUnityPosition()
         {
-            //swap axis as DTrack uses right-handed world space
+            // swap axes as DTrack uses right-handed world space
             return new Vector3( this.x, this.z, this.y );
         }
     }
+
     public class Rotation3x3
     {
         // Rotation matrix R:
@@ -81,22 +88,6 @@ namespace DTrack.Util
             this.r22 = r22;
         }
 
-// jd        public Quaternion ToUnityQuaternion()
-// jd        {
-// jd                float w  = -Mathf.Sqrt( Mathf.Max(0.0f, 1.0f + r00 + r11 + r22)) / 2.0f;
-// jd
-// jd                float x  =  Mathf.Sqrt( Mathf.Max(0.0f, 1.0f + r00 - r11 - r22)) / 2.0f;
-// jd                x *= -Mathf.Sign( x * (r21 - r12));
-// jd
-// jd                float y  =  Mathf.Sqrt( Mathf.Max(0.0f, 1.0f - r00 + r11 - r22)) / 2.0f;
-// jd                y *= -Mathf.Sign( y * (r02 - r20));
-// jd
-// jd                float z  =  Mathf.Sqrt( Mathf.Max(0.0f, 1.0f - r00 - r11 + r22)) / 2.0f;
-// jd                z *= -Mathf.Sign( z * (r10 - r01));
-// jd
-// jd                return new Quaternion( x, z, y, -w );
-// jd        }
-
         public Quaternion ToUnityQuaternion()
         {
             float t;
@@ -107,12 +98,18 @@ namespace DTrack.Util
                 if ( r00 > r11 )
                 {
                     t = 1.0f + r00 - r11 - r22;
-                    x = t; y = r01 + r10; z = r20 + r02; w = r12 - r21;
+                    x = t;
+                    y = r01 + r10;
+                    z = r20 + r02;
+                    w = r21 - r12;
                 }
                 else
                 {
                     t = 1.0f - r00 + r11 - r22;
-                    x = r01 + r10; y = t; z = r12 + r21; w = r20 - r02;
+                    x = r01 + r10;
+                    y = t;
+                    z = r12 + r21;
+                    w = r02 - r20;
                 }
             }
             else
@@ -120,18 +117,28 @@ namespace DTrack.Util
                 if ( r00 < -r11 )
                 {
                     t = 1.0f - r00 - r11 + r22;
-                    x = r20 + r02; y = r12 + r21; z = t; w = r01 - r10;
+                    x = r20 + r02;
+                    y = r12 + r21;
+                    z = t;
+                    w = r10 - r01;
                 }
                 else
                 {
                     t = 1.0f + r00 + r11 + r22;
-                    x = r12 - r21; y = r20 - r02; z = r01 - r10; w = t;
+                    x = r21 - r12;
+                    y = r02 - r20;
+                    z = r10 - r01;
+                    w = t;
                 }
             }
 
             float s = 0.5f / Mathf.Sqrt( Mathf.Max( 0.0f, t ) );
-            return new Quaternion( s*x, s*z, s*y, s*w );
+
+            // swap axes and direction as DTrack uses right-handed world space
+            return new Quaternion( s * x, s * z, s * y, -s * w );
         }
     }
-}
+
+
+}  // namespace DTrack.Util
 

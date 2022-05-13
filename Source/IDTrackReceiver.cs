@@ -1,4 +1,8 @@
-﻿/* Copyright (c) 2019, Advanced Realtime Tracking GmbH
+﻿/* Unity DTrack Plugin: script IDTrackReceiver
+ *
+ * Interface for DTrack Receivers
+ *
+ * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -28,8 +32,15 @@ using DTrack.DataObjects;
 
 namespace DTrack
 {
+
+
     public interface IDTrackReceiver
     {
         void ReceiveDTrackPacket(Packet packet);
+        void Register();
+        void Unregister();
     }
-}
+
+
+}  // namespace DTrack
+

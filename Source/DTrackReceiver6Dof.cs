@@ -1,5 +1,9 @@
-﻿/* Copyright (c) 2019, Advanced Realtime Tracking GmbH
- * 
+﻿/* Unity DTrack Plugin: script DTrackReceiver6Dof
+ *
+ * Providing DTrack standard 6DOF data to a Game Object
+ *
+ * Copyright (c) 2020-2022 Advanced Realtime Tracking GmbH & Co. KG
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -25,13 +29,16 @@
  */
 
 using System;
+using DTrack;
 using DTrack.DataObjects;
 using DTrack.DataObjects.Body;
 using UnityEngine;
 
 namespace DTrack
 {
-    public class DTrackReceiver6Dof : MonoBehaviour, IDTrackReceiver
+
+
+    public class DTrackReceiver6Dof : DTrackReceiver
     {
         [Tooltip("Enter Body ID as seen in DTrack")]
         public int bodyId;
@@ -51,21 +58,12 @@ namespace DTrack
 
         void OnEnable()
         {
-            var master = FindObjectOfType<DTrack>();
-            master.RegisterTarget(gameObject);
+            this.Register();
         }
 
         void OnDisable()
         {
-            try
-            {
-                var master = FindObjectOfType<DTrack>();
-                master.UnregisterTarget(gameObject);
-            }
-            catch
-            {
-                // ignored
-            }
+            this.Unregister();
         }
 
         // Update is called once per frame
@@ -73,7 +71,7 @@ namespace DTrack
         {
         }
 
-        public void ReceiveDTrackPacket(Packet packet)
+        public override void ReceiveDTrackPacket( Packet packet )
         {
             if (packet.Body6D == null)
             {
@@ -107,4 +105,7 @@ namespace DTrack
             
         }
     }
-}
+
+
+}  // namespace DTrack
+

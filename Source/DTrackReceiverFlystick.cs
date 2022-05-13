@@ -1,5 +1,9 @@
-/* Copyright (c) 2019, Advanced Realtime Tracking GmbH
- * 
+/* Unity DTrack Plugin: script DTrackReceiverFlystick
+ *
+ * Providing DTrack Flystick data to a Game Object
+ *
+ * Copyright (c) 2020-2022 Advanced Realtime Tracking GmbH & Co. KG
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -25,6 +29,7 @@
  */
 
 using System;
+using DTrack;
 using DTrack.DataObjects;
 using DTrack.DataObjects.Body;
 using DTrack.Events;
@@ -33,7 +38,9 @@ using UnityEngine.Events;
 
 namespace DTrack
 {
-    public class DTrackReceiverFlystick : MonoBehaviour, IDTrackReceiver
+
+
+    public class DTrackReceiverFlystick : DTrackReceiver
     {
         [Tooltip("Enter Flystick ID as seen in DTrack")]
         public int flystickId;
@@ -45,6 +52,9 @@ namespace DTrack
         [Tooltip("Update rotation of this flystick")]
         public bool applyRotation = true;
 
+        [ Tooltip( "Number of controllers as reported by DTrack" ) ]
+        public int numberOfControllers = 0;
+
         [Tooltip("Joystick orientation X (jx)")]
         public float controller1;
         [Tooltip("Joystick orientation X (jx) scale")]
@@ -53,6 +63,8 @@ namespace DTrack
         public float controller2;
         [Tooltip("Joystick orientation Y (jy) scale")]
         public float controllerSpeed2 = 0.5f;
+        [ Tooltip( "Trigger (jt)" ) ]
+        public float controller3;
 
         [Tooltip("Number of buttons as reported by DTrack")]
         public int numberOfButtons = 0;
@@ -75,6 +87,12 @@ namespace DTrack
         [Tooltip("Checked on pressed button 6 (b6)")]
         public bool button6 = false;
         public Events.FlystickButtonPressEvent buttonPressEvent6 = null;
+        [ Tooltip( "Checked on pressed button 7 (b7)" ) ]
+        public bool button7 = false;
+        public Events.FlystickButtonPressEvent buttonPressEvent7 = null;
+        [ Tooltip( "Checked on pressed button 8 (b8)" ) ]
+        public bool button8 = false;
+        public Events.FlystickButtonPressEvent buttonPressEvent8 = null;
 
         // Start is called before the first frame update
         void Start()
@@ -120,25 +138,30 @@ namespace DTrack
             this.buttonPressEvent6.ButtonId = 6;
             this.buttonPressEvent6.FlystickId = this.flystickId;
             this.buttonPressEvent6.AddListener( this.Alarm );
+
+            if ( this.buttonPressEvent7 == null )
+                this.buttonPressEvent7 = new Events.FlystickButtonPressEvent();
+
+            this.buttonPressEvent7.ButtonId = 7;
+            this.buttonPressEvent7.FlystickId = this.flystickId;
+            this.buttonPressEvent7.AddListener( this.Alarm );
+
+            if ( this.buttonPressEvent8 == null )
+                this.buttonPressEvent8 = new Events.FlystickButtonPressEvent();
+
+            this.buttonPressEvent8.ButtonId = 8;
+            this.buttonPressEvent8.FlystickId = this.flystickId;
+            this.buttonPressEvent8.AddListener( this.Alarm );
         }
 
         void OnEnable()
         {
-            var master = FindObjectOfType<DTrack>();
-            master.RegisterTarget(gameObject);
+            this.Register();
         }
 
         void OnDisable()
         {
-            try
-            {
-                var master = FindObjectOfType<DTrack>();
-                master.UnregisterTarget(gameObject);
-            }
-            catch
-            {
-                // ignored
-            }
+            this.Unregister();
         }
 
         // Update is called once per frame
@@ -181,9 +204,15 @@ namespace DTrack
             if (this.button6) {
                 this.EventTrigger( this.buttonPressEvent6 );
             }
+
+            if ( this.button7 )
+                this.EventTrigger( this.buttonPressEvent7 );
+
+            if ( this.button8 )
+                this.EventTrigger( this.buttonPressEvent8 );
         }
 
-        public void ReceiveDTrackPacket(Packet packet)
+        public override void ReceiveDTrackPacket( Packet packet )
         {
            
             if (packet.Flystick == null)
@@ -211,9 +240,25 @@ namespace DTrack
                         }
                     }
 
+                    this.numberOfControllers = flystick.GetControllerCount();
+                    this.controller1 = 0.0f;
+                    this.controller2 = 0.0f;
+                    this.controller3 = 0.0f;
 
-                    this.controller1 = flystick.GetControllerPosition(0);
-                    this.controller2 = flystick.GetControllerPosition(1);
+                    if ( this.numberOfControllers > 0 )
+                    {
+                        this.controller1 = flystick.GetControllerPosition( 0 );
+
+                        if ( this.numberOfControllers > 1 )
+                        {
+                            this.controller2 = flystick.GetControllerPosition( 1 );
+
+                            if ( this.numberOfControllers > 2 )
+                            {
+                                this.controller3 = flystick.GetControllerPosition( 2 );
+                            }
+                        }
+                    }
 
                     this.numberOfButtons = flystick.GetButtonCount();
                     this.button1 = false;
@@ -222,6 +267,8 @@ namespace DTrack
                     this.button4 = false;
                     this.button5 = false;
                     this.button6 = false;
+                    this.button7 = false;
+                    this.button8 = false;
 
                     if (this.numberOfButtons > 0) {
                         this.button1 = flystick.IsButtonPressed(0);
@@ -235,6 +282,16 @@ namespace DTrack
                                         this.button5 = flystick.IsButtonPressed(4);
                                         if (this.numberOfButtons > 5) {
                                             this.button6 = flystick.IsButtonPressed(5);
+
+                                            if ( this.numberOfButtons > 6 )
+                                            {
+                                                this.button7 = flystick.IsButtonPressed( 6 );
+
+                                                if ( this.numberOfButtons > 7 )
+                                                {
+                                                    this.button8 = flystick.IsButtonPressed( 7 );
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -264,8 +321,10 @@ namespace DTrack
 //        }
         public void Alarm( int f, int b )
         {
-            Debug.Log( "alarm: #flystick="+b + " #button="+b );
+            Debug.Log( "alarm: #flystick=" + f + " #button=" + b );
         }
     }
-}
+
+
+}  // namespace DTrack
 

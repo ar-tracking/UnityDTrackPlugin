@@ -1,4 +1,8 @@
-﻿/* Copyright (c) 2019, Advanced Realtime Tracking GmbH
+﻿/* Unity DTrack Plugin: script DTrack
+ *
+ * Main script providing DTrack tracking data to Unity
+ *
+ * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -36,14 +40,14 @@ using UnityEngine;
 
 namespace DTrack
 {
+
+
     public class DTrack : MonoBehaviour
     {
         [Tooltip("Port for incoming DTrack tracking data")]
         public int listenPort = 5000;
         [Tooltip("Game objects receiving tracking data from DTrack")]
         public GameObject[] receivers = new GameObject[0];
-
-        //public Axis axis = Axis.XZY;
 
         private IPEndPoint _endPoint;
         private UdpClient _client;
@@ -55,8 +59,6 @@ namespace DTrack
 
         void Start()
         {
-            //usedAxis = this.axis;
-
             _endPoint = new IPEndPoint(IPAddress.Any, listenPort);
 
             _client = new UdpClient(_endPoint);
@@ -68,7 +70,6 @@ namespace DTrack
                     {
                         var result = await _client.ReceiveAsync();
                         var rawString = Encoding.UTF8.GetString(result.Buffer);
-                        //usedAxis = this.axis;
                         var packet = RawParser.Parse(rawString);
                         _currentPacket = packet;
                     }
@@ -86,16 +87,16 @@ namespace DTrack
 
         public void RegisterTarget(GameObject obj)
         {
-            var objs = new List<GameObject>(receivers);
+            var objs = new List< GameObject >( this.receivers );
             objs.Add(obj);
-            receivers = objs.ToArray();
+            this.receivers = objs.ToArray();
         }
 
         public void UnregisterTarget(GameObject obj)
         {
-            var objs = new List<GameObject>(receivers);
+            var objs = new List< GameObject >( this.receivers );
             objs.Remove(obj);
-            receivers = objs.ToArray();
+            this.receivers = objs.ToArray();
         }
 
         void OnDestroy()
@@ -110,11 +111,11 @@ namespace DTrack
         {
             if (_currentPacket != null)
             {
-                foreach (var i in receivers)
+                foreach ( var receiver in this.receivers )
                 {
                     try
                     {
-                        i.GetComponent<IDTrackReceiver>().ReceiveDTrackPacket(_currentPacket);
+                        receiver.GetComponent< IDTrackReceiver >().ReceiveDTrackPacket( _currentPacket );
                     }
                     catch (Exception e)
                     {
@@ -124,4 +125,7 @@ namespace DTrack
             }
         }
     }
-}
+
+
+}  // namespace DTrack
+

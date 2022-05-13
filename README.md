@@ -1,22 +1,25 @@
-# DTrack Plugin for the Unity Game Engine 2019.x
+# DTrack Plugin for Unity Game Engine 2019.x or later
 
 This is a component for Unity 2019.1 or later with the purpose of
 native integration of the Advanded Realtime Tracking (ART) DTrack
-(versions 2 and 3) tracking solutions. This Unity Asset provides
+(DTrack2 or DTrack3) tracking solutions. This Unity Asset provides
 access to DTrack tracking data, that is send over network using
 UDP/IP datagrams. Each UDP packet contains one frame of tracking
 data including all outputs activated via the DTrack software (see
 Section [**DTrack**](#DTrackShortGuide)). This package currently
-supports the DTrack body `6d` and flystick `6df2` data formats.
+supports the DTrack standard body `6d` and Flystick `6df2` data formats.
 
 ## Download <a name="download"></a>
 
 You can download or clone sources for this Asset package at
-[GitHub](http://github.com/ar-tracking/UnityDTrackPlugin)
+[GitHub](http://github.com/ar-tracking/UnityDTrackPlugin).
+
+You can download a ready-to-use Unity package ( UnityDTrackPlugin-vX.X.X.unitypackage ) at
+[GitHub releases](http://github.com/ar-tracking/UnityDTrackPlugin/releases).
 
 ## Prerequisites
 
-To use this Asset the following components are required.
+To use this Asset the following components are required:
 
 - Unity Editor 2019.1 or later
 - Windows 64 bit, Linux 64 bit
@@ -30,6 +33,9 @@ To use this Asset the following components are required.
 In order to create a Unity package from the provided sources, follow
 the steps below.
 
+If you downloaded a ready-to-use Unity package ( UnityDTrackPlugin-vX.X.X.unitypackage ),
+proceed with [**Importing Unity package**](#importing).
+
 1. Download or clone sources for this Asset package ( see [**Download**](#download) )
 - Launch Unity
 - Create new Unity project ( e.g., "MyUnityProject" )
@@ -38,11 +44,15 @@ the steps below.
 - Export package ( right-click on DTrack in the **Project** window and
   select **Export Package...** )
 
-### Importing Unity package
+**Please note:** if you created the Unity package from sources and you want to try the available example scene,
+you need to assign DTrack scripts and to configure the plugin manually ( see [**Plugin Configuration**](#pluginconfiguration) ).
+
+### Importing Unity package <a name="importing"></a>
 
 1. Launch Unity
 - Create/Open Unity project
 - Import package ( *Assets* &rarr; *Import Package...* &rarr; *Custom Package...* )
+
 
 ## DTrack Configuration
 
@@ -50,9 +60,8 @@ Find here a quick-start guide to DTrack. For details, please, refer
 to your DTrack User's Guide and DTrack Programmer's Guide, that is
 shipped with the DTrack distribution. In this section we assume that
 the ART tracking system is properly set up and a room calibration
-was done. Further, a set of 6DOF targets and flysticks are
+was done. Further, a set of 6DOF targets and/or Flysticks are
 calibrated.
-
 
 ### Room Calibration
 
@@ -89,13 +98,10 @@ and Z axes, i.e.,<br>
 ![Figure: DTrack and Unity coordinate systems](Doc/images/dtrack-vs-unity.png)
 <br><br>
 
-
 DTrack offers a multitude of ways to adjust coordinate systems for
 room and bodies, e.g., offsets, scaling, additional rotations, or
 shifting the origin of bodies. Consult your manual for details on
 *Room adjustment* and *Body adjustment*.
-
-
 
 ### Setting outputs <a name="DTrackSettingOutputs"></a>
 
@@ -105,13 +111,12 @@ these steps:
 1. Activate a channel if needed
 - Fill in the IP/Port of the device receiving tracking data
 - Select outputs you are interested in (i.e., currently frame counter `fr`,
-time stamp `ts`, 6DOF standard body `6d` and flystick `6df2` are
+6DOF standard body `6d` and Flystick `6df2` are
 supported) via the menu *Tracking* &rarr; *Output* (DTrack3) or *Settings*
 &rarr; *Output* (DTrack2), respectively.
 
 ![Figure: DTrack output dialog](Doc/images/dtrack-output.png)
 <br><br>
-
 
 ### Data display ( 6DOF ) <a name="DTrackDataDisplay6DOF"></a>
 
@@ -123,22 +128,20 @@ tracking volume.
 ![Figure: DTrack data display body](Doc/images/dtrack-data-body.png)
 <br><br>
 
-
 ### Data display ( Flystick ) <a name="DTrackDataDisplayFlystick"></a>
 
-Enable the *flystick* view ( *View* &rarr; *Flystick* ) to find
-assigned flystick IDs. Listed flystick IDs are prefixed with a
-capital **`F`**. When referencing flysticks from within Unity in the
+Enable the *Flystick* view ( *View* &rarr; *Flystick* ) to find
+assigned Flystick IDs. Listed Flystick IDs are prefixed with a
+capital **`F`**. When referencing Flysticks from within Unity in the
 `DTrackReceiverFlystick` mask, this prefix must be removed. In addition to
-position and rotation data, button presses (_b1_,...,_b6_), joystick movement
-(_jx_,_jy_) are illustrated in the table.
+position and rotation data, button presses (_b1_,...,_b8_), joystick movement
+(_jx_,_jy_) and trigger (_jt_) are illustrated in the table.
 
 ![Figure: DTrack data display flystick](Doc/images/dtrack-data-flystick.png)
 <br><br>
 
 
-
-## Plugin Configuration
+## Plugin Configuration <a name="pluginconfiguration"></a>
 
 Streaming position, rotation and button events data from DTrack
 tracking systems to objects in your scene, requires appropriate
@@ -147,7 +150,7 @@ it a name, e.g., **DTrackSource**. To this object attach the
 **DTrack** script via *Add Component* &rarr; *Scripts* &rarr;
 *DTrack* &rarr; *DTrack*. Set *Listen Port* number matching the
 setting for DTrack (see Section [**Setting outputs**](#DTrackSettingOutputs)
-below). Note that 3D position data in the DTrack output stream have unit
+below). Note that 3DOF position data in the DTrack output stream have unit
 millimeters. The DTrack Unity Plugin converts such values to unit meter.
 
 ![Figure: Unity DTrackSource inspector](Doc/images/unity-dtrack-source.png)
@@ -174,18 +177,17 @@ In your scene attach via *Add Component* the DTrack script
 `DTrackReceiverFlystick` to an object you want to receive positional
 and rotational data as well as interactive button and joystick
 events. In the `DTrackReceiverFlystick` mask type in the ID that was
-assigned to the flystick by DTrack
+assigned to the Flystick by DTrack
 (see Section [**Data display (Flysticks)**](#DTrackDataDisplayFlystick)).
 
 ![Figure: Unity Flystick inspector](Doc/images/unity-dtrack-flystick.png)
 <br><br>
 
-
 ### Attaching 6DOF Targets to Camera
 
 For non-static, point-of-view cameras, you can attach a DTrack
 Receiver with positional and rotational data, e.g., 6DOF body or
-flystick.
+Flystick.
 
 ![Figure: Unity POV Camera inspector](Doc/images/unity-dtrack-pov.png)
 <br><br>

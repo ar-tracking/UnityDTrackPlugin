@@ -1,4 +1,4 @@
-Copyright (c) 2019, Advanced Realtime Tracking GmbH
+Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:

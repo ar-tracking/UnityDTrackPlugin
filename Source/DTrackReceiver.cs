@@ -1,4 +1,8 @@
-/* Copyright (c) 2019, Advanced Realtime Tracking GmbH
+/* Unity DTrack Plugin: script DTrackReceiver
+ *
+ * Abstract class to provide DTrack tracking data to a Game Object
+ *
+ * Copyright (c) 2020-2022 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -25,12 +29,35 @@
  */
 
 using UnityEngine;
+using DTrack.DataObjects;
 
-namespace DTrack.DataObjects.Interfaces
+namespace DTrack
 {
-    public interface IEulerRotationProvider
-    {
-        // ReSharper disable once UnusedMember.Global
-        Vector3 GetEulerRotation();
-    }
+
+
+public abstract class DTrackReceiver : MonoBehaviour, IDTrackReceiver
+{
+	/* DTrack object this receiver is associated to */
+	private DTrack _source = null;
+
+	public abstract void ReceiveDTrackPacket( Packet packet );
+
+	public void Register()
+	{
+		var dtracksource = FindObjectOfType< DTrack >();
+		dtracksource.RegisterTarget( this.gameObject );
+		this._source = dtracksource;
+	}
+
+	public void Unregister()
+	{
+		if ( this._source != null )
+		{
+			this._source.UnregisterTarget( this.gameObject );
+		}
+	}
 }
+
+
+}  // namespace DTrack
+

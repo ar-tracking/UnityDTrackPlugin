@@ -1,4 +1,8 @@
-﻿/* Copyright (c) 2019, Advanced Realtime Tracking GmbH
+﻿/* Unity DTrack Plugin: script Parser
+ *
+ * Parsing DTrack output data of one frame
+ *
+ * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -31,36 +35,41 @@ using UnityEngine;
 
 namespace DTrack.Parser
 {
+
+
     public static class RawParser
     {
-        public static Packet Parse(string raw)
+        public static Packet Parse( string raw )
         {
             var packet = new Packet();
-            var lines = raw.Split(Statics.LineSplit, StringSplitOptions.None);
-            foreach (var i in lines)
+            var lines = raw.Split( Statics.LineSplit, StringSplitOptions.None );
+            foreach ( var line in lines )
             {
                 try
                 {
-                    if (i.StartsWith(Statics.FormatFrame, StringComparison.CurrentCulture))
+                    if ( line.StartsWith( Statics.FormatFrame, StringComparison.CurrentCulture ) )
                     {
-                        packet.Frame = FrameParser.ParseFrame(i);
+                        packet.Frame = FrameParser.Parse( line );
                     }
-                    else if (i.StartsWith(Statics.FormatBody6Dof, StringComparison.CurrentCulture))
+                    else if ( line.StartsWith( Statics.FormatBody6Dof, StringComparison.CurrentCulture ) )
                     {
-                        packet.Body6D = Body6DofParser.Parser6Dof(i);
+                        packet.Body6D = Body6DofParser.Parse( line );
                     }
-                    else if (i.StartsWith(Statics.FormatFlystick, StringComparison.CurrentCulture))
+                    else if ( line.StartsWith( Statics.FormatFlystick, StringComparison.CurrentCulture ) )
                     {
-                        packet.Flystick = BodyFlystickParser.ParserFlystick(i);
+                        packet.Flystick = BodyFlystickParser.Parse( line );
                     }
                 }
-                catch (Exception e)
+                catch ( Exception e )
                 {
-                    Debug.LogError("Error parsing line: " + i + Environment.NewLine + "Exception: " + e);
+                    Debug.LogError( "Error parsing line: " + line + Environment.NewLine + "Exception: " + e );
                 }
             }
 
             return packet;
         }
     }
-}
+
+
+}  // namespace DTrack.Parser
+

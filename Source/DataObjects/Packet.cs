@@ -1,4 +1,8 @@
-﻿/* Copyright (c) 2019, Advanced Realtime Tracking GmbH
+﻿/* Unity DTrack Plugin: script Packet
+ *
+ * Data object containing parsed DTrack tracking data
+ *
+ * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -29,23 +33,19 @@ using DTrack.DataObjects.Body;
 
 namespace DTrack.DataObjects
 {
+
+
     public class Packet
     {
         public long Frame { get; set; }
 
-        //private double Timestamp { get; set; }
-
-        /* 6d */
+        /* 6d (6dcal) */
         public Dictionary<int, Body6Dof> Body6D { get; set; }
 
         /* 6df2 */
         public Dictionary<int, BodyFlystick> Flystick { get; set; }
-        /* 6dmt2 */
-        // TODO
-        /* 6dmtr */
-        // TODO
-
-        /* gl/glcal */
-        // TODO
     }
-}
+
+
+}  // namespace DTrack.DataObjects
+

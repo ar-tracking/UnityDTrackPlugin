@@ -1,8 +1,18 @@
 
-# List of Unity DTrack plugin releases
+# List of Unity DTrack Plugin releases
 
-## v1.0.0 (2020-25-02)
+## v1.0.3 (2022-05-13)
 
-- Initial release for Unity v2019.1.0f2
-- Supports 6DoF targets (6d), Flysticks 2 and 3 (6df2)
+- Supports additional Flystick2+ buttons and trigger
+- Fixing Flystick parsing error (cf. GitHub issue #3)
+
+## v1.0.2 (2020-07-28)
+
+- Fixing locale issue (cf. GitHub issue #1)
+- Fixing incorrect accessor (cf. GitHub issue #2)
+
+## v1.0.0 (2020-02-25)
+
+- Initial release for Unity 2019.1.0f2 or later
+- Supports 6DOF standard targets (6d), Flysticks (6df2)
 

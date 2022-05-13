@@ -1,5 +1,9 @@
-﻿/* Copyright (c) 2019, Advanced Realtime Tracking GmbH
- * 
+﻿/* Unity DTrack Plugin: script Body6DofParser
+ *
+ * Parsing DTrack standard 6DOF output data of one frame
+ *
+ * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -29,12 +33,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using DTrack.DataObjects.Body;
 using DTrack.Util;
+using UnityEngine;
 
 namespace DTrack.Parser
 {
+
+
     public static class Body6DofParser
     {
-        public static Dictionary<int, Body6Dof> Parser6Dof(string raw)
+        public static Dictionary< int, Body6Dof > Parse( string raw )
         {
             var bodyCountSplit = raw.Split(Statics.NumberSplit);
             var bodyCount = Convert.ToInt32(bodyCountSplit[1]);
@@ -86,4 +93,7 @@ namespace DTrack.Parser
             return bodies;
         }
     }
-}
+
+
+}  // namespace DTrack.Parser
+
