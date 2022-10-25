@@ -1,6 +1,6 @@
-﻿/* Unity DTrack Plugin: script IDTrackReceiver
- *
- * Interface for DTrack Receivers
+/* DTrackSDK in C#: Frame.cs
+ * 
+ * Data object containing DTRACK output data of one frame.
  *
  * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
  * 
@@ -28,19 +28,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using DTrack.DataObjects;
+using System.Collections.Generic;
 
-namespace DTrack
+namespace DTrackSDK
 {
 
 
-    public interface IDTrackReceiver
-    {
-        void ReceiveDTrackPacket(Packet packet);
-        void Register();
-        void Unregister();
-    }
+public class Frame
+{
+	// frame counter, timestamp
+	public uint FrameCounter  { get; set; }
+	public double TimeStamp  { get; set; }
+
+	// Standard Bodies
+	public Dictionary< int, DTrackBody > Bodies  { get; set; }
+
+	// Flysticks
+	public Dictionary< int, DTrackFlystick > Flysticks  { get; set; }
+
+	// Fingertracking hands
+	public Dictionary< int, DTrackHand > Hands  { get; set; }
 
 
-}  // namespace DTrack
+	public Frame()
+	{
+		this.FrameCounter = 0;
+		this.TimeStamp = -1.0;
+	}
+}
+
+
+}  // namespace DTrackSDK
 

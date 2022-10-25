@@ -1,6 +1,6 @@
-/* Unity DTrack Plugin: DTrackEventsFlystick.cs
+/* DTrackSDK in C#: IDTrackLocation.cs
  *
- * Events sent by DTrackReceiverFlystick script.
+ * Interface to provide a 3DOF location.
  *
  * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
  * 
@@ -28,60 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using UnityEngine;
-using UnityEngine.Events;
-
-namespace DTrack.Events
+namespace DTrackSDK.Interfaces
 {
 
 
-// Event on changed Flystick button.
-//
-// Event is invoked once, when button is pressed, and once, when it is released
-//
-// int buttonId   : button ID (1 .. 8)
-// bool isPressed : button is pressed
+public interface IDTrackLocation
+{
+	// Provide location vector.
+	//
+	//   s = [ x, y, z ]
 
-[ System.Serializable ]
-public class FlystickButtonChangedEvent : UnityEvent< int, bool >
-{}
+	float[] Loc  { get; }
+}
 
 
-// Event on changed Flystick joystick values.
-//
-// Event is invoked every time, when one of the joystick values changed
-//
-// float joystickX : horizontal joystick value (-1.0 .. 1.0)
-// float joystickY : vertical joystick value (-1.0 .. 1.0)
-
-[ System.Serializable ]
-public class FlystickJoystickChangedEvent : UnityEvent< float, float >
-{}
-
-
-// Event on changed other Flystick analog control values.
-//
-// Event is invoked every time, when the analog value changed
-//
-// int analogId : analog value ID (3 .. )
-// float val    : analog control value (-1.0 .. 1.0)
-
-[ System.Serializable ]
-public class FlystickAnalogChangedEvent : UnityEvent< int, float >
-{}
-
-
-// Event on pressed Flystick button (DEPRECATED).
-//
-// CAUTION: this event will be removed in some future version, don't use it
-//
-// int flystickId : Flystick ID (as seen in DTRACK)
-// int buttonId   : button ID (1 .. 8)
-
-[ System.Serializable ]
-public class FlystickButtonPressedEvent : UnityEvent< int, int >
-{}
-
-
-}  // DTrack.Events
+}
 

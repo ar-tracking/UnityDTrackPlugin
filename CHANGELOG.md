@@ -1,5 +1,12 @@
 
-# List of Unity DTrack Plugin releases
+# List of Unity DTRACK Plugin releases
+
+## v1.1.0 (2022-10-24)
+
+- Supports Fingertracking (gl) with 'Leap Motion Realistic Male Hands'
+- Introduces new Unity events on changed Flystick button state and
+  on changed Flystick joystick/trigger values
+- Including example script to listen for Flystick Unity events
 
 ## v1.0.3 (2022-05-13)
 

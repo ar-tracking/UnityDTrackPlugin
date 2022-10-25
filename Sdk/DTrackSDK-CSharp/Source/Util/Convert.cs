@@ -1,9 +1,9 @@
-﻿/* Unity DTrack Plugin: script Parser
+/* DTrackSDK in C#: Convert.cs
  *
- * Parsing DTrack output data of one frame
+ * Helper routines to convert data.
  *
  * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -29,47 +29,78 @@
  */
 
 using System;
-using DTrack.DataObjects;
-using DTrack.Util;
-using UnityEngine;
 
-namespace DTrack.Parser
+namespace DTrackSDK.Util
 {
 
 
-    public static class RawParser
-    {
-        public static Packet Parse( string raw )
-        {
-            var packet = new Packet();
-            var lines = raw.Split( Statics.LineSplit, StringSplitOptions.None );
-            foreach ( var line in lines )
-            {
-                try
-                {
-                    if ( line.StartsWith( Statics.FormatFrame, StringComparison.CurrentCulture ) )
-                    {
-                        packet.Frame = FrameParser.Parse( line );
-                    }
-                    else if ( line.StartsWith( Statics.FormatBody6Dof, StringComparison.CurrentCulture ) )
-                    {
-                        packet.Body6D = Body6DofParser.Parse( line );
-                    }
-                    else if ( line.StartsWith( Statics.FormatFlystick, StringComparison.CurrentCulture ) )
-                    {
-                        packet.Flystick = BodyFlystickParser.Parse( line );
-                    }
-                }
-                catch ( Exception e )
-                {
-                    Debug.LogError( "Error parsing line: " + line + Environment.NewLine + "Exception: " + e );
-                }
-            }
+public class Convert
+{
 
-            return packet;
-        }
-    }
+	// Convert 3x3 rotation matrix into rotation quaternion.
+	//
+	//       [ r00, r01, r02 ]
+	//   R = [ r10, r11, r12 ]
+	//       [ r20, r21, r22 ]
+	//
+	//   q = [ w, x, y, z ]
+
+	public static float[] Rot2Quat( float[,] rot )
+	{
+		float t;
+		float x, y, z, w;
+
+		if ( rot[ 2, 2 ] < 0.0f )
+		{
+			if ( rot[ 0, 0 ] > rot[ 1, 1 ] )
+			{
+				t = 1.0f + rot[ 0, 0 ] - rot[ 1, 1 ] - rot[ 2, 2 ];
+				x = t;
+				y = rot[ 0, 1 ] + rot[ 1, 0 ];
+				z = rot[ 2, 0 ] + rot[ 0, 2 ];
+				w = rot[ 2, 1 ] - rot[ 1, 2 ];
+			}
+			else
+			{
+				t = 1.0f - rot[ 0, 0 ] + rot[ 1, 1 ] - rot[ 2, 2 ];
+				x = rot[ 0, 1 ] + rot[ 1, 0 ];
+				y = t;
+				z = rot[ 1, 2 ] + rot[ 2, 1 ];
+				w = rot[ 0, 2 ] - rot[ 2, 0 ];
+			}
+		}
+		else
+		{
+			if ( rot[ 0, 0 ] < -rot[ 1, 1 ] )
+			{
+				t = 1.0f - rot[ 0, 0 ] - rot[ 1, 1 ] + rot[ 2, 2 ];
+				x = rot[ 2, 0 ] + rot[ 0, 2 ];
+				y = rot[ 1, 2 ] + rot[ 2, 1 ];
+				z = t;
+				w = rot[ 1, 0 ] - rot[ 0, 1 ];
+			}
+			else
+			{
+				t = 1.0f + rot[ 0, 0 ] + rot[ 1, 1 ] + rot[ 2, 2 ];
+				x = rot[ 2, 1 ] - rot[ 1, 2 ];
+				y = rot[ 0, 2 ] - rot[ 2, 0 ];
+				z = rot[ 1, 0 ] - rot[ 0, 1 ];
+				w = t;
+			}
+		}
+
+		float s = 0.5f / ( float )Math.Sqrt( Math.Max( 0.0, ( double )t ) );
+
+		float[] quat = new float[ 4 ];
+		quat[ 0 ] = s * w;
+		quat[ 1 ] = s * x;
+		quat[ 2 ] = s * y;
+		quat[ 3 ] = s * z;
+
+		return quat;
+	}
+}
 
 
-}  // namespace DTrack.Parser
+}  // namespace DTrackSDK.Util
 

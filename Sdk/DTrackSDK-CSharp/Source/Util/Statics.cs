@@ -1,6 +1,6 @@
-/* Unity DTrack Plugin: DTrackEventsFlystick.cs
- *
- * Events sent by DTrackReceiverFlystick script.
+/* DTrackSDK in C#: Statics.cs
+ * 
+ * DTrackSDK: Constants.
  *
  * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
  * 
@@ -28,60 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using UnityEngine;
-using UnityEngine.Events;
-
-namespace DTrack.Events
+namespace DTrackSDK
 {
 
 
-// Event on changed Flystick button.
-//
-// Event is invoked once, when button is pressed, and once, when it is released
-//
-// int buttonId   : button ID (1 .. 8)
-// bool isPressed : button is pressed
-
-[ System.Serializable ]
-public class FlystickButtonChangedEvent : UnityEvent< int, bool >
-{}
+public class FingerIndex
+{
+	public const int THUMB = 0;
+	public const int INDEX = 1;
+	public const int MIDDLE = 2;
+	public const int RING = 3;
+	public const int PINKY = 4;
+}
 
 
-// Event on changed Flystick joystick values.
-//
-// Event is invoked every time, when one of the joystick values changed
-//
-// float joystickX : horizontal joystick value (-1.0 .. 1.0)
-// float joystickY : vertical joystick value (-1.0 .. 1.0)
+public class Statics
+{
+	// properties for parsers
+	public static readonly char[] LineSplit = { ( char )0x0d, ( char )0x0a };
+	public static readonly char[] NumberSplit = { ' ' };
+	public static readonly char[] SectionTrim = { '[', ']' };
+	public static readonly string[] SectionSplit = { "][", "] [" };
 
-[ System.Serializable ]
-public class FlystickJoystickChangedEvent : UnityEvent< float, float >
-{}
-
-
-// Event on changed other Flystick analog control values.
-//
-// Event is invoked every time, when the analog value changed
-//
-// int analogId : analog value ID (3 .. )
-// float val    : analog control value (-1.0 .. 1.0)
-
-[ System.Serializable ]
-public class FlystickAnalogChangedEvent : UnityEvent< int, float >
-{}
+	// DTRACK output (ASCII): prefixes of data types
+	public const string Prefix_fr = "fr ";
+	public const string Prefix_ts = "ts ";
+	public const string Prefix_6dcal = "6dcal ";
+	public const string Prefix_6d = "6d ";
+	public const string Prefix_6df2 = "6df2 ";
+	public const string Prefix_glcal = "glcal ";
+	public const string Prefix_gl = "gl ";
+}
 
 
-// Event on pressed Flystick button (DEPRECATED).
-//
-// CAUTION: this event will be removed in some future version, don't use it
-//
-// int flystickId : Flystick ID (as seen in DTRACK)
-// int buttonId   : button ID (1 .. 8)
-
-[ System.Serializable ]
-public class FlystickButtonPressedEvent : UnityEvent< int, int >
-{}
-
-
-}  // DTrack.Events
+}  // namespace DTrackSDK
 

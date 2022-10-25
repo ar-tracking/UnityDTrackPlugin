@@ -1,6 +1,6 @@
-﻿/* Unity DTrack Plugin: script DTrack
+﻿/* Unity DTrack Plugin: DTrack.cs
  *
- * Main script providing DTrack tracking data to Unity
+ * Main script providing DTRACK tracking data to Unity.
  *
  * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
  * 
@@ -26,105 +26,134 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * Version v1.1.0
  */
 
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using DTrack.DataObjects;
-using DTrack.Parser;
+using System.Threading.Tasks;
 using UnityEngine;
+
+using DTrackSDK;
+using DTrack.Util;
 
 namespace DTrack
 {
 
 
-    public class DTrack : MonoBehaviour
-    {
-        [Tooltip("Port for incoming DTrack tracking data")]
-        public int listenPort = 5000;
-        [Tooltip("Game objects receiving tracking data from DTrack")]
-        public GameObject[] receivers = new GameObject[0];
+public class DTrack : MonoBehaviour
+{
+	[ Tooltip( "UDP port for incoming DTRACK tracking data" ) ]
+	public int listenPort = 5000;
 
-        private IPEndPoint _endPoint;
-        private UdpClient _client;
-        private Thread _thread;
+	// Current value of DTRACK frame counter
+	private long currentFrameCounter = 0;
 
-        private Packet _currentPacket;
+	// Game objects receiving tracking data from DTRACK
+	private GameObject[] receivers = new GameObject[ 0 ];
 
-        private bool _runReceiveThread = true;
+	private IDTrackReceiver[] receiversDR = new IDTrackReceiver[ 0 ];
 
-        void Start()
-        {
-            _endPoint = new IPEndPoint(IPAddress.Any, listenPort);
+	private DTrackSDK.DTrackSDK sdk = null;
 
-            _client = new UdpClient(_endPoint);
-            _thread = new Thread(async () =>
-            {
-                while (_runReceiveThread)
-                {
-                    try
-                    {
-                        var result = await _client.ReceiveAsync();
-                        var rawString = Encoding.UTF8.GetString(result.Buffer);
-                        var packet = RawParser.Parse(rawString);
-                        _currentPacket = packet;
-                    }
-                    catch (ObjectDisposedException) 
-                    {
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.Log("Parsing Error: " + e);
-                    }
-                }
-            });
-            _thread.Start();
-        }
+	private Thread thread;
+	private bool runReceiveThread = false;
 
-        public void RegisterTarget(GameObject obj)
-        {
-            var objs = new List< GameObject >( this.receivers );
-            objs.Add(obj);
-            this.receivers = objs.ToArray();
-        }
 
-        public void UnregisterTarget(GameObject obj)
-        {
-            var objs = new List< GameObject >( this.receivers );
-            objs.Remove(obj);
-            this.receivers = objs.ToArray();
-        }
+	void Start()
+	{
+		this.sdk = new DTrackSDK.DTrackSDK( listenPort );
+		if ( ! this.sdk.IsDataInterfaceValid )
+		{
+			Debug.Log( $"Cannot initialize SDK to receive DTRACK tracking data: {this.sdk.GetLastErrorMessage()}" );
+			return;
+		}
 
-        void OnDestroy()
-        {
-            _runReceiveThread = false;
-            _thread.Abort();
-            _client.Close();
-        }
+		this.thread = new Thread( new ThreadStart( ReceiveThread ) );
 
-        // Update is called once per frame
-        void FixedUpdate()
-        {
-            if (_currentPacket != null)
-            {
-                foreach ( var receiver in this.receivers )
-                {
-                    try
-                    {
-                        receiver.GetComponent< IDTrackReceiver >().ReceiveDTrackPacket( _currentPacket );
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.Log("Error passing Packet: " + e);
-                    }
-                }
-            }
-        }
-    }
+		this.runReceiveThread = true;
+		this.thread.Start();
+	}
+
+	void OnDestroy()
+	{
+		this.runReceiveThread = false;
+		this.thread.Abort();
+		this.sdk = null;
+	}
+
+
+	// Register a DTrackReceiver game object to receive DTRACK tracking data.
+
+	public void RegisterTarget( GameObject receiver )
+	{
+		var receiverslist = new List< GameObject >( this.receivers );
+		receiverslist.Add( receiver );
+		this.receivers = receiverslist.ToArray();
+
+		updateReceiversDR();
+	}
+
+	// Unregister a DTrackReceiver game object.
+
+	public void UnregisterTarget( GameObject receiver )
+	{
+		var receiverslist = new List< GameObject >( this.receivers );
+		receiverslist.Remove( receiver );
+		this.receivers = receiverslist.ToArray();
+
+		updateReceiversDR();
+	}
+
+	// Update list of registered IDTrackReceiver components.
+
+	private void updateReceiversDR()
+	{
+		var recs = new List< IDTrackReceiver >();
+
+		foreach ( GameObject rec in this.receivers )
+		{
+			recs.Add( rec.GetComponent< IDTrackReceiver >() );
+		}
+
+		this.receiversDR = recs.ToArray();
+	}
+
+
+	// Thread to receive tracking data from DTRACK and to forward it to DTrackReceiver game objects.
+
+	private async void ReceiveThread()
+	{
+		while ( this.runReceiveThread )
+		{
+			bool ok = await this.sdk.ReceiveAsync();
+			if ( ok )
+			{
+				DTrackSDK.Frame frame = this.sdk.GetFrame();  // returns a new Frame object after every ReceiveAsync()
+
+				this.currentFrameCounter = frame.FrameCounter;
+
+				foreach ( IDTrackReceiver rec in this.receiversDR )
+				{
+					if ( rec != null )
+					{
+						try
+						{
+							rec.ReceiveDTrackFrame( frame );
+						}
+						catch ( Exception e )
+						{
+							Debug.Log( $"Error handling frame: {e}" );
+						}
+					}
+				}
+			}
+		}
+	}
+}
 
 
 }  // namespace DTrack

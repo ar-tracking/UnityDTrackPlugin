@@ -1,6 +1,7 @@
-/* Unity DTrack Plugin: DTrackEventsFlystick.cs
+/* DTrackSDK in C#: DTrackBody.cs
  *
- * Events sent by DTrackReceiverFlystick script.
+ * Data object containing DTRACK output data of one 6DOF object,
+ * (e.g. of a Standard Body).
  *
  * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
  * 
@@ -28,60 +29,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using UnityEngine;
-using UnityEngine.Events;
+using DTrackSDK.Interfaces;
+using DTrackSDK.Util;
 
-namespace DTrack.Events
+namespace DTrackSDK
 {
 
 
-// Event on changed Flystick button.
-//
-// Event is invoked once, when button is pressed, and once, when it is released
-//
-// int buttonId   : button ID (1 .. 8)
-// bool isPressed : button is pressed
+public class DTrackBody : DTrackObject, IDTrackLocation, IDTrackRotation
+{
+	public float[] Loc  { get; }
+	public float[,] Rot  { get; }
+	public float[] Quaternion  => Convert.Rot2Quat( this.Rot );
 
-[ System.Serializable ]
-public class FlystickButtonChangedEvent : UnityEvent< int, bool >
-{}
+	public DTrackBody( int id, float quality, float sx, float sy, float sz,
+	                   float r0, float r1, float r2, float r3, float r4, float r5, float r6, float r7, float r8 )
+			: base( id, quality )
+	{
+		this.Loc = new float[ 3 ];
+		this.Loc[ 0 ] = sx;
+		this.Loc[ 1 ] = sy;
+		this.Loc[ 2 ] = sz;
 
-
-// Event on changed Flystick joystick values.
-//
-// Event is invoked every time, when one of the joystick values changed
-//
-// float joystickX : horizontal joystick value (-1.0 .. 1.0)
-// float joystickY : vertical joystick value (-1.0 .. 1.0)
-
-[ System.Serializable ]
-public class FlystickJoystickChangedEvent : UnityEvent< float, float >
-{}
-
-
-// Event on changed other Flystick analog control values.
-//
-// Event is invoked every time, when the analog value changed
-//
-// int analogId : analog value ID (3 .. )
-// float val    : analog control value (-1.0 .. 1.0)
-
-[ System.Serializable ]
-public class FlystickAnalogChangedEvent : UnityEvent< int, float >
-{}
+		this.Rot = new float[ 3, 3 ];
+		this.Rot[ 0, 0 ] = r0;
+		this.Rot[ 1, 0 ] = r1;
+		this.Rot[ 2, 0 ] = r2;
+		this.Rot[ 0, 1 ] = r3;
+		this.Rot[ 1, 1 ] = r4;
+		this.Rot[ 2, 1 ] = r5;
+		this.Rot[ 0, 2 ] = r6;
+		this.Rot[ 1, 2 ] = r7;
+		this.Rot[ 2, 2 ] = r8;
+	}
+}
 
 
-// Event on pressed Flystick button (DEPRECATED).
-//
-// CAUTION: this event will be removed in some future version, don't use it
-//
-// int flystickId : Flystick ID (as seen in DTRACK)
-// int buttonId   : button ID (1 .. 8)
-
-[ System.Serializable ]
-public class FlystickButtonPressedEvent : UnityEvent< int, int >
-{}
-
-
-}  // DTrack.Events
+}  // namespace DTrackSDK
 

@@ -1,6 +1,6 @@
 {
-    "description": "Plugin for the ART DTrack tracking system.",
-    "displayName": "DTrack Plugin",
+    "description": "Plugin for the ART DTRACK tracking system.",
+    "displayName": "DTRACK Plugin",
     "keywords": [
         "art", "dtrack",
         "tracking",
@@ -15,7 +15,7 @@
         "url": "https://github.com/ar-tracking/UnityDTrackPlugin"
     },
     "unity": "2019.1",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "author": {
         "name": "Advanced Realtime Tracking GmbH & Co. KG",
         "url": "https://ar-tracking.com"

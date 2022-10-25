@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.4465878, g: 0.49642277, b: 0.57482505, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -94,8 +94,9 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
-    m_ShowResolutionOverlay: 1
     m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -145,8 +146,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 170076733}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -223,6 +225,7 @@ GameObject:
   - component: {fileID: 384705475}
   - component: {fileID: 384705474}
   - component: {fileID: 384705473}
+  - component: {fileID: 384705476}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -238,8 +241,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 384705471}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 5.25}
+  m_LocalPosition: {x: 0, y: 1.25, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 788681094}
   m_RootOrder: 0
@@ -271,6 +274,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -282,6 +286,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -302,6 +307,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 384705471}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &384705476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384705471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a893c053279fc901c93312c7ba5aa248, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -405,21 +422,176 @@ MonoBehaviour:
   m_GameObject: {fileID: 788681089}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 656e2c16cc1a3593b937b60d172da49c, type: 3}
+  m_Script: {fileID: 11500000, guid: 69ba51c2b2b663f5faa6cb02bdc27187, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   flystickId: 2
-  frame: 0
   applyPosition: 1
   applyRotation: 1
-  controller1: 0
-  controllerSpeed1: 0.5
-  controller2: 0
-  controllerSpeed2: 0.5
-  button1: 0
-  button2: 0
-  button3: 0
-  button4: 0
+  button1ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 384705476}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button2ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 384705476}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button3ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 384705476}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button4ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 384705476}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button5ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 384705476}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button6ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 384705476}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button7ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 384705476}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button8ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 384705476}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  joystickChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 384705476}
+        m_MethodName: OnJoystickChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  analog3ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 384705476}
+        m_MethodName: OnTriggerChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button1PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button2PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button3PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button4PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button5PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button6PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button7PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button8PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!136 &788681091
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -448,6 +620,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -459,6 +632,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -523,11 +697,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 832688257}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d95e67302288dc99bcc6bf54e3a7242, type: 3}
+  m_Script: {fileID: 11500000, guid: 29979b65aa5cd7d9d97194732d12df1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bodyId: 3
-  frame: 0
+  bodyId: 2
   applyPosition: 1
   applyRotation: 1
 --- !u!65 &832688259
@@ -557,6 +730,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -568,6 +742,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -597,7 +772,7 @@ Transform:
   m_GameObject: {fileID: 832688257}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.2, z: 0}
-  m_LocalScale: {x: 0.075, y: 0.095, z: 0.075}
+  m_LocalScale: {x: 0.075, y: 0.075, z: 0.075}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -631,11 +806,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1467775502}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d95e67302288dc99bcc6bf54e3a7242, type: 3}
+  m_Script: {fileID: 11500000, guid: 29979b65aa5cd7d9d97194732d12df1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bodyId: 2
-  frame: 0
+  bodyId: 1
   applyPosition: 1
   applyRotation: 1
 --- !u!65 &1467775504
@@ -665,6 +839,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -676,6 +851,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -722,6 +898,7 @@ GameObject:
   - component: {fileID: 1610434901}
   - component: {fileID: 1610434900}
   - component: {fileID: 1610434899}
+  - component: {fileID: 1610434902}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -737,8 +914,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1610434897}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.75, y: 0.75, z: 4.25}
+  m_LocalPosition: {x: 0, y: 1.25, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 1860915841}
   m_RootOrder: 0
@@ -770,6 +947,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -781,6 +959,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -801,6 +980,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1610434897}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1610434902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1610434897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a893c053279fc901c93312c7ba5aa248, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1669699058
 GameObject:
   m_ObjectHideFlags: 0
@@ -827,11 +1018,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1669699058}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bf6b4adad01b9372b068a08566a9d6b, type: 3}
+  m_Script: {fileID: 11500000, guid: 367a99a9963cff7b4adf64d76917d1df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   listenPort: 5000
-  receivers: []
 --- !u!4 &1669699060
 Transform:
   m_ObjectHideFlags: 0
@@ -875,21 +1065,176 @@ MonoBehaviour:
   m_GameObject: {fileID: 1860915836}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 656e2c16cc1a3593b937b60d172da49c, type: 3}
+  m_Script: {fileID: 11500000, guid: 69ba51c2b2b663f5faa6cb02bdc27187, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   flystickId: 1
-  frame: 0
   applyPosition: 1
   applyRotation: 1
-  controller1: 0
-  controllerSpeed1: 0.5
-  controller2: 0
-  controllerSpeed2: 0.5
-  button1: 0
-  button2: 0
-  button3: 0
-  button4: 0
+  button1ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1610434902}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button2ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1610434902}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button3ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1610434902}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button4ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1610434902}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button5ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1610434902}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button6ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1610434902}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button7ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1610434902}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button8ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1610434902}
+        m_MethodName: OnButtonChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  joystickChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1610434902}
+        m_MethodName: OnJoystickChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  analog3ChangedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1610434902}
+        m_MethodName: OnTriggerChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  button1PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button2PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button3PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button4PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button5PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button6PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button7PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
+  button8PressedEventDeprecated:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!136 &1860915838
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -918,6 +1263,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -929,6 +1275,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -991,11 +1338,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1960734277}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d95e67302288dc99bcc6bf54e3a7242, type: 3}
+  m_Script: {fileID: 11500000, guid: 29979b65aa5cd7d9d97194732d12df1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bodyId: 1
-  frame: 0
+  bodyId: 3
   applyPosition: 1
   applyRotation: 1
 --- !u!20 &1960734279

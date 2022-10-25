@@ -1,9 +1,9 @@
-/* Unity DTrack Plugin: Transform.cs
- *
- * Helper routines to convert from ART to Unity world.
- *
- * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
- *
+/* DTrackSDK in C#: CalibratedHandsParser.cs
+ * 
+ * Parsing number of calibrated Fingertracking hands of DTRACK output data.
+ * 
+ * Copyright (c) 2020-2022 Advanced Realtime Tracking GmbH & Co. KG
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -28,48 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using UnityEngine;
+using System;
 
-namespace DTrack.Util
+namespace DTrackSDK.Parsers
 {
 
 
-public class ConvertPosition
+public static class CalibratedHandsParser
 {
-	private static readonly float MM_TO_M = 0.001f;
-
-	// Convert ART position vector to Unity position vector.
-
-	public static Vector3 ToUnity( float x, float y, float z )
+	public static int Parse( string raw )
 	{
-		// swap axes as DTRACK uses right-handed world space, convert unit to 'meter'
-		return new Vector3( x * MM_TO_M, z * MM_TO_M, y * MM_TO_M );
-	}
-
-
-	// Convert ART position vector to Unity position vector.
-	//   p = [ x, y, z ]
-
-	public static Vector3 ToUnity( float[] p )
-	{
-		// swap axes as DTRACK uses right-handed world space, convert unit to 'meter'
-		return new Vector3( p[ 0 ] * MM_TO_M, p[ 2 ] * MM_TO_M, p[ 1 ] * MM_TO_M );
+		string[] split = raw.Split( ' ' );
+		return Convert.ToInt32( split[ 1 ] );
 	}
 }
 
 
-public class ConvertRotation
-{
-	// Convert ART rotation quaternion to Unity rotation quaternion.
-	//   q = [ w, x, y, z ]
-
-	public static Quaternion ToUnity( float[] q )
-	{
-		// swap axes and direction as DTRACK uses right-handed world space
-		return new Quaternion( q[ 1 ], q[ 3 ], q[ 2 ], -q[ 0 ] );
-	}
-}
-
-
-}  // namespace DTrack.Util
+}  // namespace DTrackSDK.Parsers
 

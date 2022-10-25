@@ -1,8 +1,8 @@
-/* Unity DTrack Plugin: Transform.cs
+﻿/* Unity DTrack Plugin: DTrackReceiver6Dof.cs
  *
- * Helper routines to convert from ART to Unity world.
+ * Script providing DTRACK Standard Body data to a GameObject.
  *
- * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2020-2022 Advanced Realtime Tracking GmbH & Co. KG
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -28,48 +28,72 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
 using UnityEngine;
 
-namespace DTrack.Util
+using DTrackSDK;
+using DTrack;
+using DTrack.Util;
+
+namespace DTrack
 {
 
 
-public class ConvertPosition
+public class DTrackReceiver6Dof : DTrackReceiver
 {
-	private static readonly float MM_TO_M = 0.001f;
+	[ Tooltip( "Standard Body ID as seen in DTRACK" ) ]
+	public int bodyId;
 
-	// Convert ART position vector to Unity position vector.
+	[ Tooltip( "Update position of this GameObject" ) ]
+	public bool applyPosition = true;
+	[ Tooltip( "Update rotation of this GameObject" ) ]
+	public bool applyRotation = true;
 
-	public static Vector3 ToUnity( float x, float y, float z )
+
+	void OnEnable()
 	{
-		// swap axes as DTRACK uses right-handed world space, convert unit to 'meter'
-		return new Vector3( x * MM_TO_M, z * MM_TO_M, y * MM_TO_M );
+		this.Register();
+	}
+
+	void OnDisable()
+	{
+		this.Unregister();
 	}
 
 
-	// Convert ART position vector to Unity position vector.
-	//   p = [ x, y, z ]
-
-	public static Vector3 ToUnity( float[] p )
+	void Update()
 	{
-		// swap axes as DTRACK uses right-handed world space, convert unit to 'meter'
-		return new Vector3( p[ 0 ] * MM_TO_M, p[ 2 ] * MM_TO_M, p[ 1 ] * MM_TO_M );
+		DTrackSDK.Frame frame = GetDTrackFrame();  // ensures data integrity against DTrack class
+		if ( frame == null )  return;  // no new tracking data
+		if ( frame.Bodies == null )  return;
+
+		try
+		{
+			DTrackSDK.DTrackBody dtBody;
+
+			if ( frame.Bodies.TryGetValue( this.bodyId - 1, out dtBody ) )
+			{
+				if ( dtBody.IsTracked )
+				{
+					if ( this.applyPosition )
+					{
+						this.transform.position = ConvertPosition.ToUnity( dtBody.Loc );
+					}
+
+					if ( this.applyRotation )
+					{
+						this.transform.rotation = ConvertRotation.ToUnity( dtBody.Quaternion );
+					}
+				}
+			}
+		}
+		catch ( Exception e )
+		{
+			Debug.Log( $"Error while moving object: {e}" );
+		}
 	}
 }
 
 
-public class ConvertRotation
-{
-	// Convert ART rotation quaternion to Unity rotation quaternion.
-	//   q = [ w, x, y, z ]
-
-	public static Quaternion ToUnity( float[] q )
-	{
-		// swap axes and direction as DTRACK uses right-handed world space
-		return new Quaternion( q[ 1 ], q[ 3 ], q[ 2 ], -q[ 0 ] );
-	}
-}
-
-
-}  // namespace DTrack.Util
+}  // namespace DTrack
 

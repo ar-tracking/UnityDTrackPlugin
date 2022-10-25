@@ -1,4 +1,8 @@
-﻿/* Copyright (c) 2019, Advanced Realtime Tracking GmbH
+/* DTrackSDK in C#: FrameCounterParser.cs
+ * 
+ * Parsing frame counter of DTRACK output data.
+ * 
+ * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -24,20 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace DTrack.DataObjects.Body
+using System;
+
+namespace DTrackSDK.Parsers
 {
-    public abstract class Body
-    {
-        public int Id { get; }
 
-        public int GetUnityId()
-        {
-            return this.Id + 1;
-        }
 
-        protected Body(int id)
-        {
-            Id = id;
-        }
-    }
+public static class FrameCounterParser
+{
+	public static uint Parse( string raw )
+	{
+		string[] split = raw.Split( ' ' );
+		return Convert.ToUInt32( split[ 1 ] );
+	}
 }
+
+
+}  // namespace DTrackSDK.Parsers
+
