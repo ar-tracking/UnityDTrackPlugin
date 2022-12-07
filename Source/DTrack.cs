@@ -27,7 +27,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
- * Version v1.1.0
+ * Version v1.1.1
  */
 
 using System;
@@ -47,10 +47,24 @@ namespace DTrack
 public class DTrack : MonoBehaviour
 {
 	[ Tooltip( "UDP port for incoming DTRACK tracking data" ) ]
-	public int listenPort = 5000;
+	public int listenPort = 0;  // final default see OnValidate()
 
-	// Current value of DTRACK frame counter
+	[ Serializable ]
+	public enum DTrackCoordinates
+	{
+		[ InspectorName( "Powerwall" ) ]
+		powerwall = 0,
+		[ InspectorName( "Normal" ) ]
+		normal = 1
+	}
+
+	[ Tooltip( "Room coordinates as used in DTRACK" ) ]
+	public DTrackCoordinates dTrackCoordinates = DTrackCoordinates.normal;  // final default see OnValidate()
+
+#if UNITY_EDITOR
+	// Current value of DTRACK frame counter (just for debugging)
 	private long currentFrameCounter = 0;
+#endif
 
 	// Game objects receiving tracking data from DTRACK
 	private GameObject[] receivers = new GameObject[ 0 ];
@@ -62,6 +76,21 @@ public class DTrack : MonoBehaviour
 	private Thread thread;
 	private bool runReceiveThread = false;
 
+
+	void OnValidate()
+	{
+		if ( this.listenPort == 0 )  // first usage at all: change defaults
+		{
+			this.listenPort = 5000;
+			this.dTrackCoordinates = DTrackCoordinates.powerwall;
+		}
+	}
+
+	void Awake()
+	{
+		Converter.SetDefaultCoordinates();
+		if ( this.dTrackCoordinates == DTrackCoordinates.normal )  Converter.SetOldCoordinates();
+	}
 
 	void Start()
 	{
@@ -81,7 +110,8 @@ public class DTrack : MonoBehaviour
 	void OnDestroy()
 	{
 		this.runReceiveThread = false;
-		this.thread.Abort();
+		if ( this.thread != null )  this.thread.Abort();
+
 		this.sdk = null;
 	}
 
@@ -134,7 +164,9 @@ public class DTrack : MonoBehaviour
 			{
 				DTrackSDK.Frame frame = this.sdk.GetFrame();  // returns a new Frame object after every ReceiveAsync()
 
+#if UNITY_EDITOR
 				this.currentFrameCounter = frame.FrameCounter;
+#endif
 
 				foreach ( IDTrackReceiver rec in this.receiversDR )
 				{

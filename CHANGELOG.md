@@ -1,6 +1,11 @@
 
 # List of Unity DTRACK Plugin releases
 
+## v1.1.1 (2022-11-30)
+
+- Supports DTRACK room calibration modes 'Powerwall' and 'Normal'
+- Supports Fingertracking (gl) with 'Leap Motion Realistic Female Hands'
+
 ## v1.1.0 (2022-10-24)
 
 - Supports Fingertracking (gl) with 'Leap Motion Realistic Male Hands'

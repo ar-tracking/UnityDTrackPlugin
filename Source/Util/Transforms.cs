@@ -34,40 +34,81 @@ namespace DTrack.Util
 {
 
 
-public class ConvertPosition
+public class Converter
 {
-	private static readonly float MM_TO_M = 0.001f;
+	// Use default coordinate system conversion; old conversion otherwise
+	private static bool isDefault = true;
+
+	public static readonly float MM_TO_M = 0.001f;
+
+
+	// Set coordinate system conversion.
+
+	public static void SetDefaultCoordinates()  // default conversion (Z <-> -Z)
+	{
+		isDefault = true;
+	}
+	public static void SetOldCoordinates()  // old conversion (Y <-> Z)
+	{
+		isDefault = false;
+	}
+
 
 	// Convert ART position vector to Unity position vector.
 
-	public static Vector3 ToUnity( float x, float y, float z )
+	public static Vector3 PositionToUnity( float x, float y, float z )
 	{
-		// swap axes as DTRACK uses right-handed world space, convert unit to 'meter'
-		return new Vector3( x * MM_TO_M, z * MM_TO_M, y * MM_TO_M );
+		// change axes as DTRACK uses right-handed world space, convert unit to 'meter'
+		if ( isDefault )
+		{
+			return new Vector3( x * MM_TO_M, y * MM_TO_M, -z * MM_TO_M );
+		}
+		else
+		{
+			return new Vector3( x * MM_TO_M, z * MM_TO_M, y * MM_TO_M );
+		}
 	}
 
 
 	// Convert ART position vector to Unity position vector.
 	//   p = [ x, y, z ]
 
-	public static Vector3 ToUnity( float[] p )
+	public static Vector3 PositionToUnity( float[] p )
 	{
-		// swap axes as DTRACK uses right-handed world space, convert unit to 'meter'
-		return new Vector3( p[ 0 ] * MM_TO_M, p[ 2 ] * MM_TO_M, p[ 1 ] * MM_TO_M );
+		// change axes as DTRACK uses right-handed world space, convert unit to 'meter'
+		if ( isDefault )
+		{
+			return new Vector3( p[ 0 ] * MM_TO_M, p[ 1 ] * MM_TO_M, -p[ 2 ] * MM_TO_M );
+		}
+		else
+		{
+			return new Vector3( p[ 0 ] * MM_TO_M, p[ 2 ] * MM_TO_M, p[ 1 ] * MM_TO_M );
+		}
 	}
-}
 
 
-public class ConvertRotation
-{
 	// Convert ART rotation quaternion to Unity rotation quaternion.
 	//   q = [ w, x, y, z ]
 
-	public static Quaternion ToUnity( float[] q )
+	public static Quaternion RotationToUnity( float[] q )
 	{
-		// swap axes and direction as DTRACK uses right-handed world space
-		return new Quaternion( q[ 1 ], q[ 3 ], q[ 2 ], -q[ 0 ] );
+		// change axes and direction as DTRACK uses right-handed world space
+		if ( isDefault )
+		{
+			return new Quaternion( q[ 1 ], q[ 2 ], -q[ 3 ], -q[ 0 ] );
+		}
+		else
+		{
+			return new Quaternion( q[ 1 ], q[ 3 ], q[ 2 ], -q[ 0 ] );
+		}
 	}
+
+
+	// Rotation to convert ART hand coordinate system into 'Unity' hand coordinate system (all left-handed).
+
+	public static Quaternion RotationArtToUnityHand =>
+			( isDefault ? new Quaternion( 0.5f, 0.5f, 0.5f, 0.5f )
+			            : new Quaternion( 0.0f, 0.0f, Mathf.Sqrt( 0.5f ), Mathf.Sqrt( 0.5f ) ) );
 }
 
 

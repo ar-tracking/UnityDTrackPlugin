@@ -1,6 +1,6 @@
 /* Unity DTrack Plugin: LMRealisticHandMapper.cs
  *
- * Hand mapper to 'Leap Motion Realistic Male Hands' and simlilar models.
+ * Hand mapper to 'Leap Motion Realistic Male/Female Hands' and simlilar models.
  *
  * Copyright (c) 2022 Advanced Realtime Tracking GmbH & Co. KG
  *
@@ -30,6 +30,8 @@
  * Works for (at least):
  *  - 'Leap Motion Realistic Male Hands' (by Storkplay),
  *    https://assetstore.unity.com/packages/3d/characters/humanoids/leap-motion-realistic-male-hands-109961
+ *  - 'Leap Motion Realistic Female Hands' (by Storkplay),
+ *    https://assetstore.unity.com/packages/3d/characters/humanoids/leap-motion-realistic-female-hands-211090
  */
 
 using System;
@@ -57,6 +59,8 @@ public class LMRealisticHandMapper : MonoBehaviour
 
 	private Vector3 wristToLocalPosition;  // pose between this game object and the hand model's wrist
 	private Quaternion wristToLocalRotationInverse;
+	private Quaternion wristToReceiver;  // rotations between the hand model and DTrackReceiverHand 
+	private Quaternion fingerToReceiver;
 
 	private float handModelWidth;
 	private bool isSetAutomaticScale = false;
@@ -98,6 +102,16 @@ public class LMRealisticHandMapper : MonoBehaviour
 			this.isSetAutomaticScale = true;
 		}
 
+		// check for extra rotations:
+
+		Vector3 dv = Quaternion.Inverse( this.wrist.rotation ) * ( this.fingers[ 3 ].position - this.fingers[ 1 ].position );
+		this.wristToReceiver = Quaternion.identity;
+		if ( dv.z < 0 )  this.wristToReceiver = new Quaternion( 0.0f, 1.0f, 0.0f, 0.0f );
+
+		dv = Quaternion.Inverse( this.fingers[ 2 ].rotation ) * ( this.fingers[ 3 ].position - this.fingers[ 1 ].position );
+		this.fingerToReceiver = Quaternion.identity;
+		if ( dv.z < 0 )  this.fingerToReceiver = new Quaternion( 0.0f, 1.0f, 0.0f, 0.0f );
+
 		updateWristToLocal();
 	}
 
@@ -116,6 +130,8 @@ public class LMRealisticHandMapper : MonoBehaviour
 
 		this.wristToLocalPosition = R0T * ( this.wrist.position - this.transform.position );
 		this.wristToLocalRotationInverse = Quaternion.Inverse( R0T * this.wrist.rotation );
+
+		this.wristToLocalRotationInverse = this.wristToReceiver * this.wristToLocalRotationInverse;  // optimization
 	}
 
 
@@ -167,20 +183,28 @@ public class LMRealisticHandMapper : MonoBehaviour
 
 					t.position = rootPosNew;
 					t.rotation = dq * recFinger.rootRotation;
+
+					t = t.GetChild( 0 );
+					t.position = recFinger.middlePosition;
+					t.rotation = recFinger.middleRotation;
+
+					t = t.GetChild( 0 );
+					t.position = recFinger.outerPosition;
+					t.rotation = recFinger.outerRotation;
 				}
 				else  // other fingers: no modifications
 				{
 					t.position = recFinger.rootPosition;
-					t.rotation = recFinger.rootRotation;
+					t.rotation = recFinger.rootRotation * fingerToReceiver;
+
+					t = t.GetChild( 0 );
+					t.position = recFinger.middlePosition;
+					t.rotation = recFinger.middleRotation * fingerToReceiver;
+
+					t = t.GetChild( 0 );
+					t.position = recFinger.outerPosition;
+					t.rotation = recFinger.outerRotation * fingerToReceiver;
 				}
-
-				t = t.GetChild( 0 );
-				t.position = recFinger.middlePosition;
-				t.rotation = recFinger.middleRotation;
-
-				t = t.GetChild( 0 );
-				t.position = recFinger.outerPosition;
-				t.rotation = recFinger.outerRotation;
 			}
 			catch ( Exception e )  // assigned fingers aren't as deep as expected
 			{

@@ -77,12 +77,12 @@ public class DTrackReceiver6Dof : DTrackReceiver
 				{
 					if ( this.applyPosition )
 					{
-						this.transform.position = ConvertPosition.ToUnity( dtBody.Loc );
+						this.transform.position = Converter.PositionToUnity( dtBody.Loc );
 					}
 
 					if ( this.applyRotation )
 					{
-						this.transform.rotation = ConvertRotation.ToUnity( dtBody.Quaternion );
+						this.transform.rotation = Converter.RotationToUnity( dtBody.Quaternion );
 					}
 				}
 			}

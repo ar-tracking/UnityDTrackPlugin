@@ -167,12 +167,12 @@ public class DTrackReceiverFlystick : DTrackReceiver
 				{
 					if ( this.applyPosition )
 					{
-						this.transform.position = ConvertPosition.ToUnity( dtFlystick.Loc );
+						this.transform.position = Converter.PositionToUnity( dtFlystick.Loc );
 					}
 
 					if ( this.applyRotation )
 					{
-						this.transform.rotation = ConvertRotation.ToUnity( dtFlystick.Quaternion );
+						this.transform.rotation = Converter.RotationToUnity( dtFlystick.Quaternion );
 					}
 				}
 

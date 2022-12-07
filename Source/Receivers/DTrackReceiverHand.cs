@@ -76,10 +76,9 @@ public class DTrackReceiverHand : DTrackReceiver
 #endif
 
 	// to convert coordinate systems
-	private static Quaternion rotArtToUnityHand = new Quaternion( 0.0f, 0.0f, Mathf.Sqrt( 0.5f ), Mathf.Sqrt( 0.5f ) );
-	private static Quaternion rotUnityToArtHand = new Quaternion( 0.0f, 0.0f, -Mathf.Sqrt( 0.5f ), Mathf.Sqrt( 0.5f ) );
-	private static Quaternion rotUnityToArtFingerLeft = new Quaternion( 0.0f, 0.0f, -Mathf.Sqrt( 0.5f ), Mathf.Sqrt( 0.5f ) );
-	private static Quaternion rotUnityToArtFingerRight = new Quaternion( Mathf.Sqrt( 0.5f ), Mathf.Sqrt( 0.5f ), 0.0f, 0.0f );
+	private Quaternion rotUnityToArtHand;
+	private Quaternion rotUnityToArtFingerLeft;
+	private Quaternion rotUnityToArtFingerRight;
 
 	private float indexLength;
 
@@ -97,20 +96,21 @@ public class DTrackReceiverHand : DTrackReceiver
 
 		if ( dtHand.IsLeft )  // left hand
 		{
-			rotUnityToArtFinger = rotUnityToArtFingerLeft;
+			rotUnityToArtFinger = this.rotUnityToArtFingerLeft;
 			facArtToUnityAngle = 1.0f;
 		}
 		else  // right hand
 		{
-			rotUnityToArtFinger = rotUnityToArtFingerRight;
+			rotUnityToArtFinger = this.rotUnityToArtFingerRight;
 			facArtToUnityAngle = -1.0f;
 		}
 
-		Quaternion dtHandRotation = ConvertRotation.ToUnity( dtHand.Quaternion ) * rotUnityToArtHand;
-		Vector3 dtHandPosition = ConvertPosition.ToUnity( dtHand.Loc );
+		Quaternion dtHandRotation0 = Converter.RotationToUnity( dtHand.Quaternion );
+		Quaternion dtHandRotation = dtHandRotation0 * this.rotUnityToArtHand;
+		Vector3 dtHandPosition = Converter.PositionToUnity( dtHand.Loc );
 
 		Vector3 locart, dlocart;
-		Quaternion rotart, drotart;
+		Quaternion rotart, drotartInv;
 
 		// calculate pose of phalanges:
 
@@ -123,15 +123,15 @@ public class DTrackReceiverHand : DTrackReceiver
 
 			// finger tip:
 
-			locart = dtHandPosition + dtHandRotation * rotArtToUnityHand * ConvertPosition.ToUnity( dtFinger.Loc );
+			locart = dtHandPosition + dtHandRotation0 * Converter.PositionToUnity( dtFinger.Loc );
 
 			finger.tipPosition = locart;
 
 			// outer phalanx:
 
-			dlocart = ConvertPosition.ToUnity( 0.0f, 0.0f, dtFinger.LengthPhalanxOuter );
+			dlocart = new Vector3( 0.0f, dtFinger.LengthPhalanxOuter * Converter.MM_TO_M, 0.0f );
 
-			rotart = dtHandRotation * rotArtToUnityHand * ConvertRotation.ToUnity( dtFinger.Quaternion ) * rotUnityToArtFinger;
+			rotart = dtHandRotation0 * Converter.RotationToUnity( dtFinger.Quaternion ) * rotUnityToArtFinger;
 			locart -= rotart * dlocart;
 
 			finger.outerPosition = locart;
@@ -139,10 +139,10 @@ public class DTrackReceiverHand : DTrackReceiver
 
 			// middle phalanx:
 
-			dlocart = ConvertPosition.ToUnity( 0.0f, 0.0f, dtFinger.LengthPhalanxMiddle );
-			drotart = Quaternion.Euler( 0.0f, 0.0f, facArtToUnityAngle * dtFinger.AngleOuterMiddle );
+			dlocart = new Vector3( 0.0f, dtFinger.LengthPhalanxMiddle * Converter.MM_TO_M, 0.0f );
+			drotartInv = Quaternion.AngleAxis( facArtToUnityAngle * dtFinger.AngleOuterMiddle, Vector3.back );
 
-			rotart *= Quaternion.Inverse( drotart );
+			rotart *= drotartInv;
 			locart -= rotart * dlocart;
 
 			finger.middlePosition = locart;
@@ -150,10 +150,10 @@ public class DTrackReceiverHand : DTrackReceiver
 
 			// inner (root) phalanx:
 
-			dlocart = ConvertPosition.ToUnity( 0.0f, 0.0f, dtFinger.LengthPhalanxInner );
-			drotart = Quaternion.Euler( 0.0f, 0.0f, facArtToUnityAngle * dtFinger.AngleMiddleInner );
+			dlocart = new Vector3( 0.0f, dtFinger.LengthPhalanxInner * Converter.MM_TO_M, 0.0f );
+			drotartInv = Quaternion.AngleAxis( facArtToUnityAngle * dtFinger.AngleMiddleInner, Vector3.back );
 
-			rotart *= Quaternion.Inverse( drotart );
+			rotart *= drotartInv;
 			locart -= rotart * dlocart;
 
 			finger.rootPosition = locart;
@@ -178,12 +178,12 @@ public class DTrackReceiverHand : DTrackReceiver
 
 			hand.wristRotation = dtHandRotation;
 			hand.wristPosition = hand.fingers[ DTrackSDK.FingerIndex.MIDDLE ].rootPosition -
-			                     dtHandRotation * ConvertPosition.ToUnity( 0.0f, 0.0f, this.indexLength );
+			                     dtHandRotation * new Vector3( 0.0f, this.indexLength * Converter.MM_TO_M, 0.0f );
 		}
 		else
 		{
 			hand.wristRotation = dtHandRotation;
-			hand.wristPosition = dtHandPosition + dtHandRotation * ConvertPosition.ToUnity( 0.0f, 0.025f, -0.100f );
+			hand.wristPosition = dtHandPosition + dtHandRotation * new Vector3( 0.0f, -0.100f, 0.025f );
 		}
 
 		return hand;
@@ -192,6 +192,10 @@ public class DTrackReceiverHand : DTrackReceiver
 
 	void Start()
 	{
+		this.rotUnityToArtHand = Quaternion.Inverse( Converter.RotationArtToUnityHand );
+		this.rotUnityToArtFingerLeft = this.rotUnityToArtHand;
+		this.rotUnityToArtFingerRight = new Quaternion( 1.0f, 0.0f, 0.0f, 0.0f ) * this.rotUnityToArtHand;
+
 		this.indexLength = 0.0f;
 	}
 

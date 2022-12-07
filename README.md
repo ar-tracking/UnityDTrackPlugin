@@ -1,5 +1,7 @@
 # DTRACK Plugin for Unity Game Engine 2019.x or later
 
+**Version v1.1.1**
+
 This is a component for Unity 2019.1 or later with the purpose of
 native integration of the Advanced Realtime Tracking (ART) DTRACK
 (DTrack2 or DTRACK3) tracking solutions. This Unity Asset provides
@@ -55,7 +57,7 @@ you need to assign DTrack scripts and to configure the plugin manually ( see sec
 - Create/Open Unity project
 - Import package ( *Assets* &rarr; *Import Package...* &rarr; *Custom Package...* )
 
-### Updating from Unity DTRACK Plugin v1.0.3
+### Updating from Unity DTRACK Plugin v1.0.3 or later
 
 To update the DTRACK Plugin within an existing Unity project it's necessary to replace the entire directory
 /path/to/unity/projects/*MyUnityProject*/Assets/**DTrack**/ .
@@ -65,10 +67,12 @@ To update the DTRACK Plugin within an existing Unity project it's necessary to r
 - Remove directory /path/to/unity/projects/*MyUnityProject*/Assets/**DTrack**/ , either manually or in Unity Editor ( *Project* &rarr; *Assets* &rarr; *DTrack* &rarr; *(right click) Delete* )
 - Install the DTRACK Plugin from Unity package (see above)
 
-There's no need to adjust settings in already attached scripts ( **DTrack**, **DTrackReceiver6Dof**, **DTrackReceiverFlystick** ).
+There's no need to adjust settings in already attached scripts ( **DTrack**, **DTrackReceiver6Dof**,
+**DTrackReceiverFlystick**, ... ).
 
-**Please note:** the so far used 'Unity events' to notify pressed Flystick buttons were declared deprecated
-and will be replaced in some future version of the plugin. Please don't use them in new projects
+**Please note:** the formerly (Unity DTRACK Plugins v1.0.X) used 'Unity events' to notify pressed
+Flystick buttons were declared deprecated
+and will be removed in some future version of the plugin. Please don't use them in new projects
 ( see section [**Applying Flystick Data**](#pluginconfigurationflystick) ).
 
 **Tip:** if after an update existing button event settings ( *Button Press Event X*, now denoted as
@@ -84,34 +88,70 @@ the ART tracking system is properly set up and a room calibration
 was done. Further, a set of Standard Bodies and/or Flysticks and/or Fingertracking hands is
 calibrated.
 
-### Room Calibration
+### Room Calibration <a name="dtrackroomcalibration"></a>
 
 For general information about the DTRACK room calibration and room
 adjustment see the DTRACK User's Guide. Here we discuss details
 relevant for use with the Unity Engine.
 
-The calibration angle tool which comes with your ART tracking system
-defines the coordinate system layout in your tracking area. It
-consists of four retroreflective or active markers mounted onto an
-L-shaped frame.
-
-![Figure: DTRACK calibration angle tool](Doc/images/calibration-angle.png)
-<br>
-
-The marker on top of the edge of this L-shape by default designates
-the origin of the DTRACK coordinate system. When using the _Normal_
-calibration mode (see figure below), the long arm of this L-shape
-corresponds to the X axis and the short arm to the Y axis. DTRACK
-coordinates refer to a right-handed coordinate system, so when the
-tool is placed flat on the ground with the markers pointing up the
-Z axis points upwards.
+DTRACK coordinates refer to a right-handed coordinate system, whereas
+Unity is using a left-handed coordinate system with the Y axis pointing
+up. The plugin provides two possibilities to transform DTRACK coordinates
+into the Unity world, corresponding to the two DTRACK calibration modes
+( setting _coordinate system_ ).
 
 ![Figure: DTRACK3 room calibration dialog](Doc/images/dtrack-room-calibration.png)
 <br>
 
+The calibration angle tool which comes with your ART tracking system
+defines the coordinate system layout in your tracking area. It
+consists of four retroreflective or active markers mounted onto an
+L-shaped frame. The marker on top of the edge of this L-shape by default
+designates the origin of the DTRACK coordinate system. 
+
+![Figure: DTRACK calibration angle tool](Doc/images/calibration-angle.png)
+<br>
+
+#### DTRACK Calibration Mode 'Powerwall'
+
+**Please note:** it's recommended to use this calibration mode.
+
+When using the DTRACK _Powerwall_
+calibration mode (see figure below), the long arm of this L-shape
+corresponds to the X axis and the short arm to the (-Z) axis. DTRACK
+coordinates refer to a right-handed coordinate system, so if the
+tool is placed flat on the ground with the markers pointing up, the
+Y axis points upwards.
+
+The plugin transforms a right-handed position of a DTRACK 6DOF
+measurement to a left-handed Unity position by negating the Z
+axis, i.e.<br>
+
+**(** ***X***<sub>Unity</sub> , ***Y***<sub>Unity</sub> ,
+***Z***<sub>Unity</sub> ) = ( ***X***<sub>DTRACK</sub> ,
+***Y***<sub>DTRACK</sub>, ***-Z***<sub>DTRACK</sub> **)**.
+
+![Figure: DTRACK and Unity coordinate systems](Doc/images/dtrack-vs-unity-powerwall.png)
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DTRACK and Unity coordinate systems in _Powerwall_ mode
+<br>
+
+#### DTRACK Calibration Mode 'Normal'
+
+This was the only available mode in Unity DTRACK plugin prior to v1.1.1.
+
+**Please note:** it's recommended to prefer the 'Powerwall' calibration mode (see above).
+
+When using the DTRACK _Normal_
+calibration mode (see figure below), the long arm of the L-shape
+corresponds to the X axis and the short arm to the Y axis. DTRACK
+coordinates refer to a right-handed coordinate system, so if the
+tool is placed flat on the ground with the markers pointing up, the
+Z axis points upwards.
+
 The plugin transforms a right-handed position of a DTRACK 6DOF
 measurement to a left-handed Unity position by switching the Y
-and Z axes, i.e.,<br>
+and Z axes, i.e.<br>
 
 **(** ***X***<sub>Unity</sub> , ***Y***<sub>Unity</sub> ,
 ***Z***<sub>Unity</sub> ) = ( ***X***<sub>DTRACK</sub> ,
@@ -119,11 +159,8 @@ and Z axes, i.e.,<br>
 
 ![Figure: DTRACK and Unity coordinate systems](Doc/images/dtrack-vs-unity.png)
 <br>
-
-DTRACK offers a multitude of ways to adjust coordinate systems for
-room and bodies, e.g., offsets, scaling, additional rotations, or
-shifting the origin of bodies. Consult your manual for details on
-*Room adjustment* and *Body adjustment*.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DTRACK and Unity coordinate systems in _Normal_ mode
+<br>
 
 ### Setting Outputs <a name="dtracksettingoutputs"></a>
 
@@ -163,10 +200,15 @@ this prefix must be removed.
 Streaming position, rotation and button events data from DTRACK
 tracking systems to objects in your scene, requires appropriate
 network settings. In your scene add an *Empty* game object and give
-it a name, e.g., **DTrackSource**. To this object attach the
+it a name, e.g. **DTrackSource**. To this object attach the
 **DTrack** script via *Add Component* &rarr; *Scripts* &rarr;
-*DTrack* &rarr; *DTrack*. Set *Listen Port* number matching the
-setting for DTRACK (see section [**Setting Outputs**](#dtracksettingoutputs)).
+*DTrack* &rarr; *DTrack*.
+
+- Set *Listen Port* number matching the
+  setting for DTRACK (see section [**Setting Outputs**](#dtracksettingoutputs))
+- Set *DTrack Coordinates* matching the calibration mode used in DTRACK
+  (see section [**Room Calibration**](#dtrackroomcalibration))
+
 Note that position data in the DTRACK output stream have unit
 millimeters. The DTRACK Unity Plugin converts such values to unit meter.
 
@@ -217,8 +259,8 @@ or joystick values to scripts attached to arbitrary game objects. It provides:
 - One event on changed trigger value (just available at Flystick2+) ( *Analog 3 Changed Event* ); the event
   is invoked every time the value has changed
 
-**Please note:** the so far (Unity DTRACK plugins v1.0.X) used 'Unity events' to notify pressed Flystick
-buttons ( *Button Press Event X* ) were declared deprecated and will be replaced in some future version of the plugin.
+**Please note:** the formerly (Unity DTRACK Plugins v1.0.X) used 'Unity events' to notify pressed Flystick
+buttons ( *Button Press Event X* ) were declared deprecated and will be removed in some future version of the plugin.
 Please don't use them in new projects.
 
 ![Figure: Unity Flystick inspector](Doc/images/unity-dtrack-flystick-analogs.png)
@@ -232,15 +274,16 @@ Finally choose the listener routine's name.
 ### Applying Fingertracking Data
 
 The DTRACK Plugin provides support of ART Fingertracking, so far adjusted
-for usage with 'Leap Motion Realistic Male Hands' (by Storkplay, available at
+for usage with 'Leap Motion Realistic Male/Female Hands' (by Storkplay, available at
 the Unity Asset Store), or hand models with equivalent rig and coordinate systems:
 
 - https://assetstore.unity.com/packages/3d/characters/humanoids/leap-motion-realistic-male-hands-109961
+- https://assetstore.unity.com/packages/3d/characters/humanoids/leap-motion-realistic-female-hands-211090
 
 ![Figure: Leap Motion Realistic Male Hand](Doc/images/leapmotion-realistic-hand.png)
 <br>
 
-Add one of the *Prefabs* of your **LMRealisticMaleHands** asset to your scene.
+Add one of the *Prefabs* of your **LMRealisticFemaleHands** or **LMRealisticMaleHands** asset to your scene.
 
 Within the root object of the created left or right hand (`Hand_0X_L` or `Hand_0X_R`)
 now two components with missing scripts appear. Remove these components via
@@ -265,12 +308,12 @@ If the real size of the person's hand is differing too much from the hand model'
 to modify the *Scale* factor in the **Transform** box of the hand's root object (`Hand_0X_L` or `Hand_0X_R`).
 If setting *Automatic Scale* is enabled, the hand mapper script tries to find a suitable value automatically.
 
-<br><br>
+<br><br><br>
 
 Advanced Realtime Tracking GmbH & Co. KG<br>
 Am Oeferl 6<br>
 82362 Weilheim i. OB<br>
 Germany<br>
 
-http://ar-tracking.com
+https://ar-tracking.com
 
