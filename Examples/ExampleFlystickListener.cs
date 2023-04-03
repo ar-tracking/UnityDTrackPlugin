@@ -1,9 +1,9 @@
-/* Unity DTrack Plugin: ExampleFlystickListener.cs
+/* ART DTRACK Plugin for Unity Game Engine: ExampleFlystickListener.cs
  *
  * Example event listener routines to receive Flystick events.
  * For use in own scripts.
  *
- * Copyright (c) 2022 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2022-2023 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:

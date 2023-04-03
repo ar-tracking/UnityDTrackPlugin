@@ -1,5 +1,11 @@
 
-# List of Unity DTRACK Plugin releases
+# List of ART DTRACK Plugin for Unity Game Engine releases
+
+## v1.1.2 (2023-04-01)
+
+- Some reorganization to allow release as UPM package, esp. in OpenUPM
+  (https://www.openupm.com/packages/com.ar-tracking.dtrack/)
+- Example script to navigate a 'camera' using a Flystick joystick
 
 ## v1.1.1 (2022-11-30)
 

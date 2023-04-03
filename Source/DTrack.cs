@@ -1,8 +1,8 @@
-﻿/* Unity DTrack Plugin: DTrack.cs
+﻿/* ART DTRACK Plugin for Unity Game Engine: DTrack.cs
  *
  * Main script providing DTRACK tracking data to Unity.
  *
- * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2019-2023 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -27,7 +27,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
- * Version v1.1.1
+ * Version v1.1.2
  */
 
 using System;

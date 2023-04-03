@@ -1,8 +1,8 @@
-﻿/* Unity DTrack Plugin: IDTrackReceiver.cs
+﻿/* ART DTRACK Plugin for Unity Game Engine: IDTrackReceiver.cs
  *
  * Interface for script to provide DTRACK tracking data to a game object.
  *
- * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2019-2023 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:

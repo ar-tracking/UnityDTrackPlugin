@@ -1,24 +1,24 @@
 {
-    "description": "Plugin for the ART DTRACK tracking system.",
-    "displayName": "DTRACK Plugin",
+    "name": "com.ar-tracking.dtrack",
+    "version": "1.1.2",
+    "displayName": "ART DTRACK Plugin",
+    "description": "Plugin for integration of Advanced Realtime Tracking DTRACK tracking solutions.",
+    "unity": "2019.4",
     "keywords": [
-        "art", "dtrack",
-        "tracking",
-        "unity"
+        "art", "dtrack", "tracking",
+        "integration", "interaction"
     ],
-    "name": "com.art.dtrack",
-    "readme": "README.md",
-    "repoPackagePath": "",
-    "repository": {
-        "revision": "", 
-        "type": "git", 
-        "url": "https://github.com/ar-tracking/UnityDTrackPlugin"
-    },
-    "unity": "2019.1",
-    "version": "1.1.1",
-    "author": {
-        "name": "Advanced Realtime Tracking GmbH & Co. KG",
-        "url": "https://ar-tracking.com"
-    }
+    "documentationUrl": "https://github.com/ar-tracking/UnityDTrackPlugin/blob/master/README.md",
+    "changelogUrl": "https://github.com/ar-tracking/UnityDTrackPlugin/blob/master/CHANGELOG.md",
+    "license": "BSD-3-Clause",
+    "licensesUrl": "https://github.com/ar-tracking/UnityDTrackPlugin/blob/master/LICENSE.md",
+    "author": "Advanced Realtime Tracking GmbH & Co. KG (https://ar-tracking.com/)",
+    "samples": [
+        {
+            "displayName": "Example Scene",
+            "description": "Scene to demonstrate the usage of the ART DTRACK Plugin.",
+            "path": "Samples~/DTrackExampleScene"
+        }
+    ]
 }
 

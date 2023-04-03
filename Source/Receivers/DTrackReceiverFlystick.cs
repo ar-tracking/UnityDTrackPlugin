@@ -1,8 +1,8 @@
-/* Unity DTrack Plugin: DTrackReceiverFlystick.cs
+/* ART DTRACK Plugin for Unity Game Engine: DTrackReceiverFlystick.cs
  *
  * Script providing DTRACK Flystick data to a GameObject.
  *
- * Copyright (c) 2020-2022 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2020-2023 Advanced Realtime Tracking GmbH & Co. KG
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:

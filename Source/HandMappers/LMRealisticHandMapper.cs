@@ -1,8 +1,8 @@
-/* Unity DTrack Plugin: LMRealisticHandMapper.cs
+/* ART DTRACK Plugin for Unity Game Engine: LMRealisticHandMapper.cs
  *
  * Hand mapper to 'Leap Motion Realistic Male/Female Hands' and simlilar models.
  *
- * Copyright (c) 2022 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2022-2023 Advanced Realtime Tracking GmbH & Co. KG
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:

@@ -1,8 +1,8 @@
-/* Unity DTrack Plugin: DTrackReceiverHand.cs
+/* ART DTRACK Plugin for Unity Game Engine: DTrackReceiverHand.cs
  *
  * Script providing DTRACK Fingertracking data to a hand mapper script.
  *
- * Copyright (c) 2021-2022 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2021-2023 Advanced Realtime Tracking GmbH & Co. KG
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
