@@ -18,7 +18,7 @@ supports the DTRACK Standard Body ('6d'), Flystick ('6df2') and Fingertracking (
 
 ## Features <a name="features"></a>
 
-- Validated with Unity Editors 2019.4 to 2022.2
+- Validated with Unity Editors 2019.4 to 2022.3
 - Supports DTRACK room calibration modes 'Powerwall' and 'Normal'
 - Supports tracking of 6DOF Standard Bodies and Flystick2, Flystick2+ and Flystick3
 - Supports Flystick buttons and joystick/trigger (emitting Unity events)
