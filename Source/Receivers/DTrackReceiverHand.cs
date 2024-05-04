@@ -2,7 +2,7 @@
  *
  * Script providing DTRACK Fingertracking data to a hand mapper script.
  *
- * Copyright (c) 2021-2023 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2021-2024 Advanced Realtime Tracking GmbH & Co. KG
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -216,13 +216,12 @@ public class DTrackReceiverHand : DTrackReceiver
 	{
 		DTrackSDK.Frame frame = GetDTrackFrame();  // ensures data integrity against DTrack class
 		if ( frame == null )  return null;  // no new tracking data
-		if ( frame.Hands == null )  return null;
 
 		try
 		{
-			DTrackSDK.DTrackHand dtHand;
+			DTrackSDK.DTrackHand dtHand = frame.GetHand( this.handId - 1 );
 
-			if ( frame.Hands.TryGetValue( this.handId - 1, out dtHand ) )
+			if ( dtHand != null )
 			{
 				if ( dtHand.IsTracked )
 				{

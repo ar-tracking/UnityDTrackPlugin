@@ -1,6 +1,6 @@
 # ART DTRACK Plugin for Unity Game Engine 2019 or later
 
-**Version v1.1.2**
+**Version v1.1.3**
 
 This is a component for Unity 2019 or later with the purpose of
 native integration of the Advanced Realtime Tracking (ART) DTRACK
@@ -18,15 +18,49 @@ supports the DTRACK Standard Body ('6d'), Flystick ('6df2') and Fingertracking (
 
 ## Features <a name="features"></a>
 
-- Validated with Unity Editors 2019.4 to 2022.3
+- Validated with Unity Editors 2019.4 to 2023.2 (but should work with any later Unity)
 - Supports DTRACK room calibration modes 'Powerwall' and 'Normal'
 - Supports tracking of 6DOF Standard Bodies and Flystick2, Flystick2+ and Flystick3
 - Supports Flystick buttons and joystick/trigger (emitting Unity events)
 - Supports Fingertracking, with 'Leap Motion Realistic Male/Female Hands' (by Storkplay)
+- (Optionally) enables UDP connection through stateful firewall
 
 ## Installing the ART DTRACK Plugin <a name="installing"></a>
 
 There are several ways to get the ART DTRACK Plugin.
+
+### Unity Asset Store <a name="assetstore"></a>
+
+The plugin is available (for free) in the Unity Asset Store 
+[https://assetstore.unity.com/packages/tools/integration/art-dtrack-plugin-246990](https://assetstore.unity.com/packages/tools/integration/art-dtrack-plugin-246990).
+
+After 'purchasing' you can install it via the Unity Package Manager:
+
+1. Launch Unity Hub
+- Create/Open Unity project
+- Open Package Manager ( *Window* &rarr; *Package Manager* &rarr; *Packages: My Assets* )
+- Download the package (button *Download* ), then install it (button *Install* )
+
+The plugin will be installed in your project's Assets folder:<br>
+/path/to/unity/projects/*MyUnityProject*/**Assets/ARTDTrackPlugin**/ .
+
+### OpenUPM <a name="openupm"></a>
+
+OpenUPM is an open-source service hosting lots of (UPM) Unity packages, all of them released as open-source.
+The ART DTRACK plugin is available (for free) via
+[https://www.openupm.com/packages/com.ar-tracking.dtrack](https://www.openupm.com/packages/com.ar-tracking.dtrack).
+
+To install it, follow the instructions mentioned at the above website; roughly:
+
+1. Launch Unity Hub
+- Create/Open Unity project
+- Open *Edit* &rarr; *Project Settings...* &rarr; *Package Manager*
+- Add a new Scoped Registry (corresponding to the above OpenUPM link), then click *Save* or *Apply*
+- Open Package Manager ( *Window* &rarr; *Package Manager* &rarr; *Packages: My Registries* )
+- Choose _ART DTRACK Plugin_ , then install it (button *Install* )
+
+The plugin will be installed in your project's Packages folder:<br>
+/path/to/unity/projects/*MyUnityProject*/**Packages/ART DTRACK Plugin**/ .
 
 ### GitHub <a name="github"></a>
 
@@ -39,25 +73,8 @@ In order to install the package, follow the steps below.
 - Create/Open Unity project
 - Import package ( *Assets* &rarr; *Import Package...* &rarr; *Custom Package...* )
 
-The plugin will be installed in your project's assets folder:<br>
+The plugin will be installed in your project's Assets folder:<br>
 /path/to/unity/projects/*MyUnityProject*/**Assets/ARTDTrackPlugin**/ .
-
-### OpenUPM <a name="openupm"></a>
-
-OpenUPM is an open-source service hosting lots of (UPM) Unity packages, all of them released as open-source.
-The ART DTRACK plugin is available (for free) via
-[https://www.openupm.com/packages/com.ar-tracking.dtrack](https://www.openupm.com/packages/com.ar-tracking.dtrack).
-
-To install it, follow the instructions mentioned at the above website; roughly:
-
-1. Launch Unity Hub
-- Open *Edit* &rarr; *Project Settings...* &rarr; *Package Manager*
-- Add a new Scoped Registry (corresponding to the above OpenUPM link), then click *Save* or *Apply*
-- Open Package Manager ( *Window* &rarr; *Package Manager* &rarr; *Packages: My Registries* )
-- Choose _ART DTRACK Plugin_ , then install it (button *Install* )
-
-The plugin will be installed in your project's Packages folder:<br>
-/path/to/unity/projects/*MyUnityProject*/**Packages/ART DTRACK Plugin**/ .
 
 ### Plain Sources <a name="plainsources"></a>
 
@@ -203,6 +220,14 @@ this prefix must be removed.
 <br>
 
 
+### Fingertracking <a name="dtrackfingertracking"></a>
+
+When configuring ART Fingertracking hand devices with 3 thimbles, be sure to activate the _Simulate 5 fingers_ setting.
+
+![Figure: DTRACK3 Fingertracking administration dialog](Documentation~/images/dtrack-fingertracking-administration.png)
+<br>
+
+
 ## Plugin Configuration <a name="pluginconfiguration"></a>
 
 Streaming position, rotation and button events data from DTRACK
@@ -214,6 +239,9 @@ it a name, e.g. **DTrackSource**. To this object attach the
 
 - Set *Listen Port* number matching the
   setting for DTRACK (see section [**Setting Outputs**](#dtracksettingoutputs))
+- Optionally set *Controller Host* with hostname or IP address of your ART Controller, if there is a
+  'stateful firewall' installed between Controller and Unity; normally that's sufficient to pass UDP packets
+  with tracking data to the plugin
 - Set *DTrack Coordinates* matching the calibration mode used in DTRACK
   (see section [**Room Calibration**](#dtrackroomcalibration))
 

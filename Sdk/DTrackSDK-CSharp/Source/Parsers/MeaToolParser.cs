@@ -1,8 +1,8 @@
-/* DTrackSDK in C#: BodyParser.cs
+/* DTrackSDK in C#: MeaToolParser.cs
  * 
- * Parsing Standard Bodies of DTRACK output data.
+ * Parsing Measurement Tools of DTRACK output data.
  * 
- * Copyright (c) 2019-2023 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2024 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -36,39 +36,39 @@ namespace DTrackSDK.Parsers
 {
 
 
-public static class BodyParser
+public static class MeaToolParser
 {
-	public static Dictionary< int, DTrackBody > Parse( string raw, out int num )
+	public static Dictionary< int, DTrackMeaTool > Parse( string raw, out int num )
 	{
-		string[] bodyCountSplit = raw.Split( Statics.NumberSplit, 3 );
+		string[] meatoolCountSplit = raw.Split( Statics.NumberSplit, 4 );
 
-		int bodyCount = Convert.ToInt32( bodyCountSplit[ 1 ] );
-		if ( bodyCount <= 0 )
+		int meatoolCount = Convert.ToInt32( meatoolCountSplit[ 2 ] );
+		if ( meatoolCount <= 0 )
 		{
 			num = 0;
 			return null;
 		}
 
-		var bodies = new Dictionary< int, DTrackBody >();
+		var bodies = new Dictionary< int, DTrackMeaTool >();
 
-		string trimmed = bodyCountSplit[ 2 ].Trim( Statics.SectionTrim );
+		string trimmed = meatoolCountSplit[ 3 ].Trim( Statics.SectionTrim );
 		string[] sectionSplit = trimmed.Split( Statics.SectionSplit, StringSplitOptions.None );
 
 		int iblk = 0;
-		int id = -1;
-		for ( int ibody = 0; ibody < bodyCount; ibody++ )
+		for ( int imt = 0; imt < meatoolCount; imt++ )
 		{
-			string[] m = sectionSplit[ iblk++ ].Split( ' ' );
+			string[] metaSection = sectionSplit[ iblk++ ].Split( ' ' );
+			int id = Convert.ToInt32( metaSection[ 0 ] );
+			float qu = Convert.ToSingle( metaSection[ 1 ], CultureInfo.InvariantCulture );
+			int buttonsCount = Convert.ToInt32( metaSection[ 2 ] );
+			float tipradius = Convert.ToSingle( metaSection[ 3 ], CultureInfo.InvariantCulture );
+
 			string[] s = sectionSplit[ iblk++ ].Split( ' ' );
-			string[] r = sectionSplit[ iblk++ ].Split( ' ' );
-
-			id = Convert.ToInt32( m[ 0 ] );
-			float qu = Convert.ToSingle( m[ 1 ], CultureInfo.InvariantCulture );
-
 			float sx = Convert.ToSingle( s[ 0 ], CultureInfo.InvariantCulture );
 			float sy = Convert.ToSingle( s[ 1 ], CultureInfo.InvariantCulture );
 			float sz = Convert.ToSingle( s[ 2 ], CultureInfo.InvariantCulture );
 
+			string[] r = sectionSplit[ iblk++ ].Split( ' ' );
 			float r0 = Convert.ToSingle( r[ 0 ], CultureInfo.InvariantCulture );
 			float r1 = Convert.ToSingle( r[ 1 ], CultureInfo.InvariantCulture );
 			float r2 = Convert.ToSingle( r[ 2 ], CultureInfo.InvariantCulture );
@@ -79,11 +79,47 @@ public static class BodyParser
 			float r7 = Convert.ToSingle( r[ 7 ], CultureInfo.InvariantCulture );
 			float r8 = Convert.ToSingle( r[ 8 ], CultureInfo.InvariantCulture );
 
+			string[] inputSection = null;
+			if ( buttonsCount > 0 )
+			{
+				inputSection = sectionSplit[ iblk ].Split( ' ' );
+			}
+			iblk++;
+
+			bool[] buttons = null;
+
+			int buttonSlots = 0;
+			if ( buttonsCount > 0 )
+			{
+				buttons = new bool[ buttonsCount ];
+
+				buttonSlots = ( int )Math.Ceiling( ( double )buttonsCount / 32 );
+
+				int m = 0;
+				for ( int slot = 0; slot < buttonSlots; slot++ )
+				{
+					int buttonGroup = Convert.ToInt32( inputSection[ slot ] );
+					for ( int k = 0; k < 32; k++ )
+					{
+						buttons[ m ] = ( ( buttonGroup & 0x01 ) != 0 );
+
+						m++;
+						if ( m == buttonsCount )
+							break;
+
+						buttonGroup >>= 1;
+					}
+				}
+			}
+
+			iblk++;  // ignore covariance
+
 			bodies.Add( id,
-			            new DTrackBody( id, qu, sx, sy, sz, r0, r1, r2, r3, r4, r5, r6, r7, r8 ) );
+			            new DTrackMeaTool( id, qu, sx, sy, sz, r0, r1, r2, r3, r4, r5, r6, r7, r8,
+			                               tipradius, buttons, buttonsCount ) );
 		}
 
-		num = id + 1;
+		num = meatoolCount;
 		return bodies;
 	}
 }

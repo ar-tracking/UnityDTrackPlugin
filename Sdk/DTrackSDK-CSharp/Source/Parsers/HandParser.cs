@@ -2,7 +2,7 @@
  * 
  * Parsing Fingertracking hands of DTRACK output data.
  * 
- * Copyright (c) 2020-2022 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2020-2023 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -38,13 +38,16 @@ namespace DTrackSDK.Parsers
 
 public static class HandParser
 {
-	public static Dictionary< int, DTrackHand > Parse( string raw )
+	public static Dictionary< int, DTrackHand > Parse( string raw, out int num )
 	{
 		string[] handsSplit = raw.Split( Statics.NumberSplit, 3 );
 
 		int handsCount = Convert.ToInt32( handsSplit[ 1 ] );
 		if ( handsCount <= 0 )
+		{
+			num = 0;
 			return null;
+		}
 
 		var hands = new Dictionary< int, DTrackHand >();
 
@@ -52,10 +55,11 @@ public static class HandParser
 		string[] handsData = trimmed.Split( Statics.SectionSplit, StringSplitOptions.None );
 
 		int blk = 0;
+		int id = -1;
 		for ( int gl = 0; gl < handsCount; gl++ )
 		{
 			string[] meta = handsData[ blk++ ].Split( ' ' );
-			int id = Convert.ToInt32( meta[ 0 ] );
+			id = Convert.ToInt32( meta[ 0 ] );
 			float qu = Convert.ToSingle( meta[ 1 ], CultureInfo.InvariantCulture );
 			int lr = Convert.ToInt32( meta[ 2 ] );
 			int nf = Convert.ToInt32( meta[ 3 ] );
@@ -111,6 +115,7 @@ public static class HandParser
 			           new DTrackHand( id, qu, lr, sx, sy, sz, r0, r1, r2, r3, r4, r5, r6, r7, r8, fingers ) );
 		}
 
+		num = id + 1;
 		return hands;
 	}
 }

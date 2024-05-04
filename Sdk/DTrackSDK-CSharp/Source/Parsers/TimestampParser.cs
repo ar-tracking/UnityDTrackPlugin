@@ -1,8 +1,8 @@
 /* DTrackSDK in C#: TimestampParser.cs
  * 
- * Parsing timestamp of DTRACK output data.
+ * Parsing timestamp data of DTRACK output data.
  * 
- * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2019-2024 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -40,7 +40,23 @@ public static class TimestampParser
 	public static double Parse( string raw )
 	{
 		string[] split = raw.Split( ' ' );
+
 		return Convert.ToDouble( split[ 1 ], CultureInfo.InvariantCulture );
+	}
+}
+
+
+public static class Timestamp2Parser
+{
+	public static double Parse( string raw, out uint tssec, out uint tsusec, out uint lat )
+	{
+		string[] split = raw.Split( ' ' );
+
+		tssec = Convert.ToUInt32( split[ 1 ] );
+		tsusec = Convert.ToUInt32( split[ 2 ] );
+		lat = Convert.ToUInt32( split[ 3 ] );
+
+		return ( double )( tssec % ( 24 * 3600 ) ) + ( double )tsusec / 1000000.0;
 	}
 }
 

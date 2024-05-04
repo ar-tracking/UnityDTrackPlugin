@@ -2,7 +2,7 @@
  * 
  * Parsing Flysticks of DTRACK output data.
  * 
- * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2019-2024 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -38,13 +38,16 @@ namespace DTrackSDK.Parsers
 
 public static class FlystickParser
 {
-	public static Dictionary< int, DTrackFlystick > Parse( string raw )
+	public static Dictionary< int, DTrackFlystick > Parse( string raw, out int num )
 	{
 		string[] flystickCountSplit = raw.Split( Statics.NumberSplit, 4 );
 
 		int flystickCount = Convert.ToInt32( flystickCountSplit[ 2 ] );
 		if ( flystickCount <= 0 )
+		{
+			num = 0;
 			return null;
+		}
 
 		var bodies = new Dictionary< int, DTrackFlystick >();
 
@@ -125,6 +128,7 @@ public static class FlystickParser
 			                                buttons, buttonsCount, analogs, analogsCount ) );
 		}
 
+		num = flystickCount;
 		return bodies;
 	}
 }

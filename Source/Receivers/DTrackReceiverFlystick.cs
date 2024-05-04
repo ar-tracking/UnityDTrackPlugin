@@ -2,7 +2,7 @@
  *
  * Script providing DTRACK Flystick data to a GameObject.
  *
- * Copyright (c) 2020-2023 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2020-2024 Advanced Realtime Tracking GmbH & Co. KG
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -156,12 +156,12 @@ public class DTrackReceiverFlystick : DTrackReceiver
 	{
 		DTrackSDK.Frame frame = GetDTrackFrame();  // ensures data integrity against DTrack class
 		if ( frame == null )  return;  // no new tracking data
-		if ( frame.Flysticks == null )  return;
 
 		try
 		{
-			DTrackSDK.DTrackFlystick dtFlystick;
-			if ( frame.Flysticks.TryGetValue( flystickId - 1, out dtFlystick ) )
+			DTrackSDK.DTrackFlystick dtFlystick = frame.GetFlystick( this.flystickId - 1 );
+
+			if ( dtFlystick != null )
 			{
 				if ( dtFlystick.IsTracked )
 				{

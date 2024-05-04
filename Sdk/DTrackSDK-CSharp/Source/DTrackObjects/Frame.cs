@@ -2,7 +2,7 @@
  * 
  * Data object containing DTRACK output data of one frame.
  *
- * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2019-2024 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -39,21 +39,88 @@ public class Frame
 	// frame counter, timestamp
 	public uint FrameCounter  { get; set; }
 	public double TimeStamp  { get; set; }
+	public uint TimeStampSec  { get; set; }
+	public uint TimeStampUsec  { get; set; }
+	public uint LatencyUsec  { get; set; }
 
 	// Standard Bodies
 	public Dictionary< int, DTrackBody > Bodies  { get; set; }
+	public int NumBodies  { get; set; }  // number of calibrated Standard Bodies (as far as known)
 
 	// Flysticks
 	public Dictionary< int, DTrackFlystick > Flysticks  { get; set; }
+	public int NumFlysticks  { get; set; }  // number of calibrated Flysticks
+
+	// Measurement Tools
+	public Dictionary< int, DTrackMeaTool > MeaTools  { get; set; }
+	public int NumMeaTools  { get; set; }  // number of calibrated Measurement Tools
 
 	// Fingertracking hands
 	public Dictionary< int, DTrackHand > Hands  { get; set; }
+	public int NumHands  { get; set; }  // number of calibrated Fingertracking hands (as far as known)
 
 
 	public Frame()
 	{
 		this.FrameCounter = 0;
 		this.TimeStamp = -1.0;
+		this.TimeStampSec = 0;
+		this.TimeStampUsec = 0;
+		this.LatencyUsec = 0;
+
+		this.NumBodies = 0;
+		this.NumFlysticks = 0;
+		this.NumMeaTools = 0;
+		this.NumHands = 0;
+	}
+
+
+	// Get Standard Body data.
+
+	public DTrackBody GetBody( int id )
+	{
+		if ( this.Bodies == null )  return null;
+
+		DTrackBody body;
+		if ( this.Bodies.TryGetValue( id, out body ) )  return body;
+
+		return null;
+	}
+
+	// Get Flystick data.
+
+	public DTrackFlystick GetFlystick( int id )
+	{
+		if ( this.Flysticks == null )  return null;
+
+		DTrackFlystick flystick;
+		if ( this.Flysticks.TryGetValue( id, out flystick ) )  return flystick;
+
+		return null;
+	}
+
+	// Get Measurement Tool data.
+
+	public DTrackMeaTool GetMeaTool( int id )
+	{
+		if ( this.MeaTools == null )  return null;
+
+		DTrackMeaTool meatool;
+		if ( this.MeaTools.TryGetValue( id, out meatool ) )  return meatool;
+
+		return null;
+	}
+
+	// Get Fingertracking hand data.
+
+	public DTrackHand GetHand( int id )
+	{
+		if ( this.Hands == null )  return null;
+
+		DTrackHand hand;
+		if ( this.Hands.TryGetValue( id, out hand ) )  return hand;
+
+		return null;
 	}
 }
 

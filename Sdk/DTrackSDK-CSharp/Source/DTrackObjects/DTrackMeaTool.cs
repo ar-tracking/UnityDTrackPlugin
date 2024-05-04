@@ -1,8 +1,8 @@
-/* DTrackSDK in C#: Statics.cs
+/* DTrackSDK in C#: DTrackMeaTool.cs
  * 
- * Miscellaneous constants.
- *
- * Copyright (c) 2019-2024 Advanced Realtime Tracking GmbH & Co. KG
+ * Data object containing DTRACK output data of one Measurement Tool.
+ * 
+ * Copyright (c) 2024 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -28,53 +28,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using DTrackSDK.Interfaces;
+
 namespace DTrackSDK
 {
 
 
-public class FingerIndex
+public class DTrackMeaTool : DTrackBody
 {
-	public const int THUMB = 0;
-	public const int INDEX = 1;
-	public const int MIDDLE = 2;
-	public const int RING = 3;
-	public const int PINKY = 4;
-}
+	public float TipRadius  { get; }
+	public int NumButtons  { get; }
+	public bool[] Buttons  { get; }
 
-public class FlystickVibrationPattern
-{
-	public const int SINGLE_CLICK = 1;
-	public const int DOUBLE_CLICK = 2;
-	public const int BUMP = 3;
-	public const int TRANSITION_HUM = 4;
-	public const int RAMP_UP = 5;
-	public const int RAMP_DOWN = 6;
-}
-
-
-public class Statics
-{
-	// connection properties
-	public const int CONTROLLER_PORT_UDPSENDER = 50107;
-	public const int CONTROLLER_PORT_FEEDBACK = 50110;
-	public const int DEFAULT_UDP_TIMEOUT = 1000;
-
-	// properties for parsers
-	public static readonly char[] LineSplit = { ( char )0x0d, ( char )0x0a };
-	public static readonly char[] NumberSplit = { ' ' };
-	public static readonly char[] SectionTrim = { '[', ']', ' ' };
-	public static readonly string[] SectionSplit = { "][", "] [" };
-
-	// DTRACK output (ASCII): prefixes of data types
-	public const string Prefix_fr = "fr ";
-	public const string Prefix_ts = "ts ";
-	public const string Prefix_ts2 = "ts2 ";
-	public const string Prefix_6dcal = "6dcal ";
-	public const string Prefix_6d = "6d ";
-	public const string Prefix_6df2 = "6df2 ";
-	public const string Prefix_6dmt2 = "6dmt2 ";
-	public const string Prefix_glcal = "glcal ";
-	public const string Prefix_gl = "gl ";
+	public DTrackMeaTool( int id, float quality, float sx, float sy, float sz,
+	                       float r0, float r1, float r2, float r3, float r4, float r5, float r6, float r7, float r8,
+	                       float tipradius, bool[] buttons, int numButtons )
+			: base( id, quality, sx, sy, sz, r0, r1, r2 ,r3, r4, r5, r6, r7, r8 )
+	{
+		this.TipRadius = tipradius;
+		this.NumButtons = numButtons;
+		this.Buttons = buttons;
+	}
 }
 
 

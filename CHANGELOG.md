@@ -1,6 +1,11 @@
 
 # List of ART DTRACK Plugin for Unity Game Engine releases
 
+## v1.1.3 (2024-05-03)
+
+- (Optionally) enables UDP connection through stateful firewall
+- Fixing DTrack1 parsing error (cf. GitHub issue #6)
+
 ## v1.1.2 (2023-04-01)
 
 - Some reorganization to allow release as UPM package, esp. in OpenUPM

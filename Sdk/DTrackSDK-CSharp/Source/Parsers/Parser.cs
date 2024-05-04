@@ -2,7 +2,7 @@
  * 
  * Parsing a frame of DTRACK output data.
  * 
- * Copyright (c) 2019-2022 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2019-2024 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -34,11 +34,17 @@ namespace DTrackSDK.Parsers
 {
 
 
-public static class RawParser
+public class Parser
 {
-	public static Frame Parse( string packet )
+	private int _numBodies = 0;
+	private int _numHands = 0;
+
+	public Frame Parse( string packet )
 	{
 		var frame = new Frame();
+
+		int calNumBodies = -1;
+		int calNumHands = -1;
 
 		string[] lines = packet.Split( Statics.LineSplit, StringSplitOptions.RemoveEmptyEntries );
 
@@ -54,30 +60,82 @@ public static class RawParser
 				{
 					frame.TimeStamp = TimestampParser.Parse( line );
 				}
+				else if ( line.StartsWith( Statics.Prefix_ts2 ) )
+				{
+					uint tssec, tsusec, lat;
+					frame.TimeStamp = Timestamp2Parser.Parse( line, out tssec, out tsusec, out lat );
+					frame.TimeStampSec = tssec;
+					frame.TimeStampUsec = tsusec;
+					frame.LatencyUsec = lat;
+				}
 				else if ( line.StartsWith( Statics.Prefix_6dcal ) )
 				{
-					CalibratedBodiesParser.Parse( line );
+					calNumBodies = CalibratedBodiesParser.Parse( line );
 				}
 				else if ( line.StartsWith( Statics.Prefix_6d ) )
 				{
-					frame.Bodies = BodyParser.Parse( line );
+					int num;
+					frame.Bodies = BodyParser.Parse( line, out num );
+					frame.NumBodies = num;
 				}
 				else if ( line.StartsWith( Statics.Prefix_6df2 ) )
 				{
-					frame.Flysticks = FlystickParser.Parse( line );
+					int num;
+					frame.Flysticks = FlystickParser.Parse( line, out num );
+					frame.NumFlysticks = num;
+				}
+				else if ( line.StartsWith( Statics.Prefix_6dmt2 ) )
+				{
+					int num;
+					frame.MeaTools = MeaToolParser.Parse( line, out num );
+					frame.NumMeaTools = num;
 				}
 				else if ( line.StartsWith( Statics.Prefix_glcal ) )
 				{
-					CalibratedHandsParser.Parse( line );
+					calNumHands = CalibratedHandsParser.Parse( line );
 				}
 				else if ( line.StartsWith( Statics.Prefix_gl ) )
 				{
-					frame.Hands = HandParser.Parse( line );
+					int num;
+					frame.Hands = HandParser.Parse( line, out num );
+					frame.NumHands = num;
 				}
 			}
 			catch ( Exception e )
 			{
-				throw new Exception( $"Error parsing line: {line} {Environment.NewLine}Exception: {e}" );
+				throw new Exception( $"Error parsing line '{line.Substring( 0, 6 )}': {e.Message}" );
+			}
+		}
+
+		if ( calNumBodies >= 0 )
+		{
+			frame.NumBodies = calNumBodies;
+		}
+		else
+		{
+			if ( frame.NumBodies > _numBodies )
+			{
+				_numBodies = frame.NumBodies;
+			}
+			else
+			{
+				frame.NumBodies = _numBodies;
+			}
+		}
+
+		if ( calNumHands >= 0 )
+		{
+			frame.NumHands = calNumHands;
+		}
+		else
+		{
+			if ( frame.NumHands > _numHands )
+			{
+				_numHands = frame.NumHands;
+			}
+			else
+			{
+				frame.NumHands = _numHands;
 			}
 		}
 

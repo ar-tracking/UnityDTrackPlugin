@@ -2,7 +2,7 @@
  *
  * Main script providing DTRACK tracking data to Unity.
  *
- * Copyright (c) 2019-2023 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2019-2024 Advanced Realtime Tracking GmbH & Co. KG
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -27,7 +27,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
- * Version v1.1.2
+ * Version v1.1.3
  */
 
 using System;
@@ -48,6 +48,9 @@ public class DTrack : MonoBehaviour
 {
 	[ Tooltip( "UDP port for incoming DTRACK tracking data" ) ]
 	public int listenPort = 0;  // final default see OnValidate()
+
+	[ Tooltip( "Optional hostname/IP of DTRACK Controller to enable UDP connection through stateful firewall" ) ]
+	public string controllerHost;
 
 	[ Serializable ]
 	public enum DTrackCoordinates
@@ -94,11 +97,17 @@ public class DTrack : MonoBehaviour
 
 	void Start()
 	{
-		this.sdk = new DTrackSDK.DTrackSDK( listenPort );
+		this.sdk = new DTrackSDK.DTrackSDK( this.listenPort );
 		if ( ! this.sdk.IsDataInterfaceValid )
 		{
 			Debug.Log( $"Cannot initialize SDK to receive DTRACK tracking data: {this.sdk.GetLastErrorMessage()}" );
 			return;
+		}
+
+		if ( ! String.IsNullOrEmpty( this.controllerHost ) )
+		{
+			if ( ! this.sdk.EnableStatefulFirewallConnection( this.controllerHost ) )
+				Debug.Log( $"Cannot send UDP packet to {this.controllerHost}" );
 		}
 
 		this.thread = new Thread( new ThreadStart( ReceiveThread ) );
@@ -112,7 +121,11 @@ public class DTrack : MonoBehaviour
 		this.runReceiveThread = false;
 		if ( this.thread != null )  this.thread.Abort();
 
-		this.sdk = null;
+		if ( this.sdk != null )
+		{
+			this.sdk.Close();
+			this.sdk = null;
+		}
 	}
 
 

@@ -2,7 +2,7 @@
  *
  * Script providing DTRACK Standard Body data to a GameObject.
  *
- * Copyright (c) 2020-2023 Advanced Realtime Tracking GmbH & Co. KG
+ * Copyright (c) 2020-2024 Advanced Realtime Tracking GmbH & Co. KG
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -65,13 +65,12 @@ public class DTrackReceiver6Dof : DTrackReceiver
 	{
 		DTrackSDK.Frame frame = GetDTrackFrame();  // ensures data integrity against DTrack class
 		if ( frame == null )  return;  // no new tracking data
-		if ( frame.Bodies == null )  return;
 
 		try
 		{
-			DTrackSDK.DTrackBody dtBody;
+			DTrackSDK.DTrackBody dtBody = frame.GetBody( this.bodyId - 1 );
 
-			if ( frame.Bodies.TryGetValue( this.bodyId - 1, out dtBody ) )
+			if ( dtBody != null )
 			{
 				if ( dtBody.IsTracked )
 				{

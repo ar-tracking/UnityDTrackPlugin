@@ -49,7 +49,11 @@ public abstract class DTrackReceiver : MonoBehaviour, IDTrackReceiver
 
 	protected void Register()
 	{
+#if UNITY_2023_1_OR_NEWER
+		DTrack dtr = FindFirstObjectByType< DTrack >();
+#else
 		DTrack dtr = FindObjectOfType< DTrack >();
+#endif
 
 		if ( dtr != null )
 		{
